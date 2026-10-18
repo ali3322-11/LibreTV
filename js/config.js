@@ -23,11 +23,10 @@ const SITE_CONFIG = {
 // API站点配置
 const API_SITES = {
     dyttzy: {
-        dyttzy: {
-         api: 'https://caiji.dyttzyapi.com/api.php/provide/vod',
-         name: '电影天堂资源',
-         detail: 'https://caiji.dyttzyapi.com',
-},
+        api: 'https://caiji.dyttzyapi.com/api.php/provide/vod',
+        name: '电影天堂资源',
+        detail: 'https://caiji.dyttzyapi.com', 
+    },
     ruyi: {
         api: 'https://cj.rycjapi.com/api.php/provide/vod',
         name: '如意资源',
