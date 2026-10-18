@@ -684,6 +684,8 @@ async function search() {
         }
         // Netflix 首页：搜索时隐藏 hero+横滑行
         if (typeof window.nfHomeShow === 'function') window.nfHomeShow(false);
+        // 隐藏最近搜索下拉框
+        if (typeof window.hideRecentDropdown === 'function') window.hideRecentDropdown();
 
         const resultsDiv = document.getElementById('results');
 
