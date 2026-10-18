@@ -32,30 +32,84 @@
         return [];
     }
 
-    // 渲染 hero
+    var heroList = [];   // 今日推荐的 5-6 部
+    var heroIdx = 0;
+    var heroTimer = null;
+
+    // 按日期算一个偏移，每天换一批推荐（同一天内稳定）
+    function dayOffset(len) {
+        var d = new Date();
+        var dayNum = Math.floor(d.getTime() / 86400000);
+        return len ? (dayNum % len) : 0;
+    }
+
+    // 渲染 hero（5-6 部高分轮换）
     async function renderHero() {
         var hero = document.getElementById('netflixHero');
         if (!hero) return;
         try {
-            var subjects = await fetchSubjects('movie', '热门', 10);
+            var subjects = await fetchSubjects('movie', '热门', 30);
             if (!subjects.length) { hero.classList.add('hidden'); return; }
-            // 选评分最高的一个当主推
-            var pick = subjects.slice().sort(function (a, b) {
+            // 按评分排序，取前 12，再按日期偏移取 6 部（每天不同）
+            var sorted = subjects.slice().sort(function (a, b) {
                 return parseFloat(b.rate || 0) - parseFloat(a.rate || 0);
-            })[0];
-            heroData = pick;
-            var cover = await proxiedCover(pick.cover);
-            document.getElementById('nfHeroBg').style.backgroundImage = 'url("' + cover + '")';
-            document.getElementById('nfHeroTitle').textContent = pick.title || '';
-            document.getElementById('nfHeroMeta').innerHTML =
-                '<span class="rate">★ ' + esc(pick.rate || '暂无') + '</span>' +
-                '<span>电影</span>';
-            document.getElementById('nfHeroDesc').textContent = '豆瓣热门推荐，点击立即播放或搜索此片。';
+            }).slice(0, 12);
+            var off = dayOffset(sorted.length);
+            heroList = [];
+            for (var i = 0; i < 6 && i < sorted.length; i++) {
+                heroList.push(sorted[(off + i) % sorted.length]);
+            }
+            heroIdx = 0;
+            showHero(0);
+            renderHeroDots();
             hero.classList.remove('hidden');
+            // 8 秒自动轮换
+            if (heroTimer) clearInterval(heroTimer);
+            heroTimer = setInterval(function () {
+                showHero((heroIdx + 1) % heroList.length);
+            }, 8000);
         } catch (e) {
             hero.classList.add('hidden');
         }
     }
+
+    function showHero(i) {
+        heroIdx = i;
+        var pick = heroList[i];
+        if (!pick) return;
+        heroData = pick;
+        var self = this;
+        proxiedCover(pick.cover).then(function (cover) {
+            document.getElementById('nfHeroBg').style.backgroundImage = 'url("' + cover + '")';
+        });
+        document.getElementById('nfHeroTitle').textContent = pick.title || '';
+        document.getElementById('nfHeroMeta').innerHTML =
+            '<span class="rate">★ ' + esc(pick.rate || '暂无') + '</span>' +
+            '<span>电影</span><span>' + (i + 1) + ' / ' + heroList.length + '</span>';
+        document.getElementById('nfHeroDesc').textContent = '豆瓣高分推荐，点击立即播放或搜索此片。';
+        renderHeroDots();
+    }
+
+    function renderHeroDots() {
+        var box = document.getElementById('nfHeroDots');
+        if (!box) return;
+        box.innerHTML = '';
+        for (var i = 0; i < heroList.length; i++) {
+            (function (idx) {
+                var d = document.createElement('span');
+                d.className = 'nf-dot' + (idx === heroIdx ? ' active' : '');
+                d.onclick = function () {
+                    if (heroTimer) clearInterval(heroTimer);
+                    showHero(idx);
+                    heroTimer = setInterval(function () {
+                        showHero((heroIdx + 1) % heroList.length);
+                    }, 8000);
+                };
+                box.appendChild(d);
+            })(i);
+        }
+    }
+    window.nfHeroGo = function (i) { showHero(i); };
 
     // 渲染一行
     async function renderRow(rowId, type, tag) {
@@ -149,4 +203,47 @@
             } catch (e) { window.nfHomeShow(true); }
         }, 600);
     });
+})();
+
+/* ========== 最近搜索下拉框：聚焦显示，失焦/搜索后隐藏 ========== */
+(function () {
+    function dropdown() { return document.getElementById('recentSearches'); }
+    function input() { return document.getElementById('searchInput'); }
+
+    window.showRecentDropdown = function () {
+        var d = dropdown();
+        if (d && d.innerHTML.trim()) d.style.display = 'block';
+    };
+    window.hideRecentDropdown = function () {
+        var d = dropdown();
+        if (d) d.style.display = 'none';
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var inp = input();
+        if (!inp) return;
+        inp.addEventListener('focus', function () { window.showRecentDropdown(); });
+        inp.addEventListener('blur', function () {
+            // 延迟隐藏，让点击下拉项有时间触发
+            setTimeout(window.hideRecentDropdown, 220);
+        });
+        // 点页面其他地方也隐藏
+        document.addEventListener('click', function (e) {
+            var d = dropdown();
+            if (d && d.style.display === 'block' &&
+                !d.contains(e.target) && e.target !== inp && !inp.contains(e.target)) {
+                window.hideRecentDropdown();
+            }
+        });
+    });
+
+    // 劫持 renderSearchHistory：渲染后保持隐藏（除非输入框聚焦）
+    var origRender = window.renderSearchHistory;
+    if (typeof origRender === 'function') {
+        window.renderSearchHistory = function () {
+            origRender();
+            var inp = input();
+            if (document.activeElement !== inp) window.hideRecentDropdown();
+        };
+    }
 })();
