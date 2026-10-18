@@ -205,3 +205,8 @@
 }
 .nf-dot.active { background: #e50914; }
 .nf-dot:hover { background: rgba(255,255,255,.7); }
+
+/* hero 可拖拽手势 */
+.nf-hero { cursor: grab; user-select: none; -webkit-user-select: none; }
+.nf-hero:active { cursor: grabbing; }
+.nf-hero img { pointer-events: none; }
