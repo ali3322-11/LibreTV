@@ -1,0 +1,285 @@
+/*
+ * LibreTV 影院主题（默认）
+ * Netflix 风格：深空黑底 + 标志性红色， cinematic 观影氛围
+ * 通过 <html data-theme="cinema"> 启用
+ */
+
+/* ---------- CSS 变量（影院） ---------- */
+[data-theme="cinema"] {
+    --primary-color: #e50914;
+    --primary-light: #f6121d;
+    --primary-dark: #b20710;
+    --secondary-color: #1a1a20;
+    --accent-color: #e50914;
+    --text-color: #f5f5f5;
+    --text-muted: #a3a3a3;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --page-gradient-start: #0f0f13;
+    --page-gradient-end: #0a0a0d;
+    --card-gradient-start: #1a1a20;
+    --card-gradient-end: #141419;
+    --card-accent: rgba(229, 9, 20, 0.06);
+    --card-hover-border: rgba(229, 9, 20, 0.5);
+}
+
+/* ---------- 页面背景：深空黑 + 微妙胶片颗粒 ---------- */
+[data-theme="cinema"] .page-bg,
+[data-theme="cinema"] body {
+    background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(229, 9, 20, 0.07), transparent),
+        linear-gradient(180deg, #0f0f13, #0a0a0d);
+    color: #f5f5f5;
+}
+
+/* ---------- 导航栏：黑透 + 红线 ---------- */
+[data-theme="cinema"] .topnav {
+    background: rgba(10, 10, 13, 0.82);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="cinema"] .topnav::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e50914 20%, #e50914 80%, transparent);
+    opacity: 0.6;
+}
+[data-theme="cinema"] .topnav-logo,
+[data-theme="cinema"] .topnav-title {
+    color: #e50914 !important;
+    background: none !important;
+    -webkit-text-fill-color: #e50914 !important;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+[data-theme="cinema"] .topnav-btn {
+    color: #e5e5e5;
+}
+[data-theme="cinema"] .topnav-btn:hover {
+    color: #fff;
+    background: rgba(229, 9, 20, 0.12);
+}
+[data-theme="cinema"] .topnav-btn.active {
+    color: #fff;
+    background: rgba(229, 9, 20, 0.18);
+    box-shadow: inset 0 -2px 0 #e50914;
+}
+
+/* ---------- Hero：影院式大标题 ---------- */
+[data-theme="cinema"] .hero-compact {
+    padding-top: 2.5rem;
+    margin-bottom: 2rem;
+}
+[data-theme="cinema"] .hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #fff !important;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+    margin-bottom: 0.75rem;
+}
+[data-theme="cinema"] .hero-title .hero-dot {
+    color: #e50914 !important;
+}
+[data-theme="cinema"] .hero-sub {
+    color: #a3a3a3 !important;
+    font-size: 1.05rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* ---------- 搜索框：暗底 + 红按钮 ---------- */
+[data-theme="cinema"] #searchArea .shadow-lg {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px;
+}
+[data-theme="cinema"] #searchInput {
+    background: #1a1a20 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+}
+[data-theme="cinema"] #searchInput::placeholder {
+    color: #6b6b76;
+}
+[data-theme="cinema"] #searchArea button[onclick="search()"] {
+    background: #e50914 !important;
+    color: #fff !important;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+[data-theme="cinema"] #searchArea button[onclick="search()"]:hover {
+    background: #f6121d !important;
+}
+[data-theme="cinema"] #searchArea button[onclick="search()"]:active {
+    transform: scale(0.97);
+}
+[data-theme="cinema"] #searchArea button[onclick="resetToHome()"] {
+    background: #1a1a20 !important;
+    color: #e5e5e5 !important;
+}
+[data-theme="cinema"] #searchArea button[onclick="resetToHome()"]:hover {
+    background: #26262e !important;
+}
+[data-theme="cinema"] #clearSearchInput {
+    background: #1a1a20 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ---------- 海报卡片：Netflix 式悬停放大 ---------- */
+[data-theme="cinema"] #douban-results > div,
+[data-theme="cinema"] #results > div {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1a1a20;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1.2), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+[data-theme="cinema"] #douban-results > div:hover,
+[data-theme="cinema"] #results > div:hover {
+    transform: scale(1.06);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(229, 9, 20, 0.4);
+    border-color: rgba(229, 9, 20, 0.4);
+    z-index: 5;
+}
+[data-theme="cinema"] .douban-card img,
+[data-theme="cinema"] .result-card img,
+[data-theme="cinema"] #douban-results img,
+[data-theme="cinema"] #results img {
+    border-radius: 8px 8px 0 0;
+}
+[data-theme="cinema"] .card-hover h3,
+[data-theme="cinema"] #douban-results h3,
+[data-theme="cinema"] #results h3 {
+    color: #f5f5f5 !important;
+}
+[data-theme="cinema"] .card-hover .text-gray-400,
+[data-theme="cinema"] .card-hover .text-gray-500 {
+    color: #a3a3a3 !important;
+}
+
+/* ---------- 豆瓣区域 ---------- */
+[data-theme="cinema"] #doubanArea h2 {
+    color: #fff !important;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+[data-theme="cinema"] #doubanArea h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.1em;
+    background: #e50914;
+    border-radius: 2px;
+    margin-right: 0.6rem;
+    vertical-align: -0.15em;
+}
+[data-theme="cinema"] #douban-movie-toggle,
+[data-theme="cinema"] #douban-tv-toggle {
+    border-radius: 9999px;
+}
+[data-theme="cinema"] #douban-movie-toggle.bg-pink-600,
+[data-theme="cinema"] #douban-tv-toggle.bg-pink-600 {
+    background: #e50914 !important;
+}
+[data-theme="cinema"] #douban-refresh {
+    background: #e50914 !important;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+[data-theme="cinema"] #douban-refresh:hover {
+    background: #f6121d !important;
+}
+[data-theme="cinema"] #douban-tags button {
+    background: #1a1a20 !important;
+    color: #a3a3a3 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+}
+[data-theme="cinema"] #douban-tags button:hover {
+    color: #fff !important;
+    border-color: rgba(229, 9, 20, 0.5) !important;
+}
+[data-theme="cinema"] #douban-tags button.active-tag {
+    background: #e50914 !important;
+    color: #fff !important;
+    border-color: #e50914 !important;
+}
+
+/* ---------- 搜索结果计数 ---------- */
+[data-theme="cinema"] #searchResultsCount {
+    color: #e50914 !important;
+    font-weight: 700;
+}
+
+/* ---------- 设置面板：暗影院风 ---------- */
+[data-theme="cinema"] .settings-panel {
+    background: linear-gradient(135deg, #141419, #0f0f13) !important;
+    border-left: 1px solid rgba(229, 9, 20, 0.15) !important;
+}
+[data-theme="cinema"] .settings-panel h3,
+[data-theme="cinema"] .settings-panel h4 {
+    color: #fff !important;
+}
+[data-theme="cinema"] .settings-panel label {
+    color: #d4d4d8 !important;
+}
+[data-theme="cinema"] .settings-panel input[type="checkbox"] {
+    accent-color: #e50914;
+}
+/* 开关按钮激活态改红 */
+[data-theme="cinema"] .toggle-bg.peer-checked\:bg-blue-600,
+[data-theme="cinema"] .peer:checked ~ .toggle-bg {
+    background-color: #e50914 !important;
+}
+
+/* ---------- 页脚 ---------- */
+[data-theme="cinema"] .footer {
+    background: #0a0a0d !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+[data-theme="cinema"] .footer p,
+[data-theme="cinema"] .footer span,
+[data-theme="cinema"] .footer div {
+    color: #6b6b76 !important;
+}
+[data-theme="cinema"] .footer a {
+    color: #a3a3a3 !important;
+}
+[data-theme="cinema"] .footer a:hover {
+    color: #e50914 !important;
+}
+
+/* ---------- 通用按钮 ---------- */
+[data-theme="cinema"] button.bg-white {
+    background: #e50914 !important;
+    color: #fff !important;
+}
+[data-theme="cinema"] button.bg-white:hover {
+    background: #f6121d !important;
+}
+
+/* ---------- 滚动条：暗红 ---------- */
+[data-theme="cinema"] ::-webkit-scrollbar-thumb {
+    background: #3a3a42 !important;
+}
+[data-theme="cinema"] ::-webkit-scrollbar-thumb:hover {
+    background: #e50914 !important;
+}
+
+/* ---------- 选集按钮（播放页） ---------- */
+[data-theme="cinema"] .episode-btn.active,
+[data-theme="cinema"] .episode-btn.current {
+    background: #e50914 !important;
+    border-color: #e50914 !important;
+    color: #fff !important;
+}
+
+/* ---------- 主题切换按钮图标 ---------- */
+[data-theme="cinema"] .icon-sun { display: block; }
+[data-theme="cinema"] .icon-moon { display: none; }
