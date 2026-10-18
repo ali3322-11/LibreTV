@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+    <script>
+/* 主题预设置（防闪烁）：默认浅色 */
+(function(){try{var t=localStorage.getItem('libretv-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="same-origin">
@@ -12,8 +16,10 @@
     <link rel="manifest" href="manifest.json">
 
     <script src="libs/tailwindcss.min.js"></script>
+    <script src="js/theme.js"></script>
     <script src="js/version-check.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/theme-light.css">
     <link rel="stylesheet" href="css/player.css">
     
     <meta http-equiv="Cache-Control" content="no-store, must-revalidate">

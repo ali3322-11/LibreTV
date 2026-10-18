@@ -1,0 +1,130 @@
+/*
+ * LibreTV 浅色主题
+ * 通过 <html data-theme="light"> 启用，覆盖深色硬编码样式
+ * 深色为默认（无 data-theme 属性时），浅色需显式设置
+ */
+
+/* ---------- CSS 变量（浅色） ---------- */
+[data-theme="light"] {
+    --primary-color: #0284c7;
+    --primary-light: #38bdf8;
+    --secondary-color: #f1f5f9;
+    --accent-color: #e11d48;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --border-color: rgba(2, 132, 199, 0.15);
+    --page-gradient-start: #f8fafc;
+    --page-gradient-end: #eef2f7;
+    --card-gradient-start: #ffffff;
+    --card-gradient-end: #f8fafc;
+    --card-accent: rgba(2, 132, 199, 0.08);
+    --card-hover-border: rgba(2, 132, 199, 0.4);
+}
+
+/* ---------- 页面背景 ---------- */
+[data-theme="light"] .page-bg {
+    background: linear-gradient(180deg, #f8fafc, #eef2f7);
+    background-image:
+        linear-gradient(180deg, #f8fafc, #eef2f7),
+        radial-gradient(circle at 25px 25px, rgba(2, 132, 199, 0.05) 2px, transparent 3px),
+        radial-gradient(circle at 75px 75px, rgba(225, 29, 72, 0.03) 1px, transparent 2px);
+    background-blend-mode: normal;
+    background-size: cover, 100px 100px, 50px 50px;
+}
+
+/* ---------- 背景色覆盖 ---------- */
+[data-theme="light"] .bg-\[\#111\] { background-color: #ffffff !important; }
+[data-theme="light"] .bg-\[\#1a1a1a\] { background-color: #f8fafc !important; }
+[data-theme="light"] .bg-\[\#0a0a0a\] { background-color: #f1f5f9 !important; }
+[data-theme="light"] .bg-\[\#151515\] { background-color: #ffffff !important; }
+[data-theme="light"] .bg-\[\#191919\] { background-color: #f1f5f9 !important; }
+[data-theme="light"] .bg-\[\#222\] { background-color: #f1f5f9 !important; }
+[data-theme="light"] .bg-\[\#333\] { background-color: #e2e8f0 !important; }
+[data-theme="light"] .bg-\[\#444\] { background-color: #cbd5e1 !important; }
+[data-theme="light"] .bg-\[\#555\] { background-color: #94a3b8 !important; }
+[data-theme="light"] .bg-black\/95 { background-color: rgba(248, 250, 252, 0.95) !important; }
+[data-theme="light"] .bg-black\/90 { background-color: rgba(248, 250, 252, 0.92) !important; }
+[data-theme="light"] .bg-black\/80 { background-color: rgba(248, 250, 252, 0.85) !important; }
+[data-theme="light"] .bg-black\/70 { background-color: rgba(15, 23, 42, 0.7) !important; }
+[data-theme="light"] .bg-black\/60 { background-color: rgba(248, 250, 252, 0.9) !important; }
+[data-theme="light"] .from-black\/30 { --tw-gradient-from: rgba(255,255,255,0.3) !important; }
+
+/* ---------- 文字颜色覆盖 ---------- */
+[data-theme="light"] .text-white { color: #0f172a !important; }
+[data-theme="light"] .text-gray-200 { color: #334155 !important; }
+[data-theme="light"] .text-gray-300 { color: #475569 !important; }
+[data-theme="light"] .text-gray-400 { color: #64748b !important; }
+[data-theme="light"] .text-gray-500 { color: #94a3b8 !important; }
+/* 彩色文字在浅色下加深，保证可读 */
+[data-theme="light"] .text-blue-300 { color: #0369a1 !important; }
+[data-theme="light"] .text-blue-400 { color: #0284c7 !important; }
+[data-theme="light"] .text-pink-400 { color: #be123c !important; }
+[data-theme="light"] .text-yellow-400 { color: #b45309 !important; }
+[data-theme="light"] .text-red-400 { color: #dc2626 !important; }
+[data-theme="light"] .text-red-500 { color: #dc2626 !important; }
+[data-theme="light"] .text-green-400 { color: #15803d !important; }
+
+/* ---------- 边框覆盖 ---------- */
+[data-theme="light"] .border-\[\#222\] { border-color: #f1f5f9 !important; }
+[data-theme="light"] .border-\[\#333\] { border-color: #e2e8f0 !important; }
+[data-theme="light"] .border-\[\#444\] { border-color: #cbd5e1 !important; }
+
+/* ---------- 卡片优化（浅色） ---------- */
+[data-theme="light"] .card-hover {
+    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+[data-theme="light"] .card-hover:hover {
+    border-color: rgba(2, 132, 199, 0.4);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.12);
+    transform: translateY(-3px);
+}
+[data-theme="light"] .card-hover::before {
+    background: linear-gradient(90deg, transparent, rgba(2,132,199,0.08), transparent);
+}
+
+/* ---------- 渐变标题在浅色下保持鲜艳 ---------- */
+[data-theme="light"] .gradient-text {
+    background: linear-gradient(to right, #0284c7, #e11d48);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 输入框 ---------- */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="password"] {
+    color-scheme: light;
+}
+
+/* ---------- 滚动条（浅色） ---------- */
+[data-theme="light"] ::-webkit-scrollbar-track { background: #f1f5f9; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ---------- 搜索框在浅色下微调 ---------- */
+[data-theme="light"] #searchInput {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+}
+[data-theme="light"] #searchInput::placeholder { color: #94a3b8; }
+
+/* ---------- 设置/历史面板 ---------- */
+[data-theme="light"] .settings-panel,
+[data-theme="light"] .history-panel {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: -4px 0 16px rgba(15, 23, 42, 0.06);
+}
+
+/* ---------- 模态框 ---------- */
+[data-theme="light"] #modal > div,
+[data-theme="light"] #passwordModal > div,
+[data-theme="light"] #disclaimerModal > div {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* ---------- 开关按钮在浅色下的底色 ---------- */
+[data-theme="light"] .toggle-bg.bg-\[\#333\] { background-color: #cbd5e1 !important; }
