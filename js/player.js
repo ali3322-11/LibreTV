@@ -420,8 +420,22 @@ function initPlayer(videoUrl) {
         if (loadingEl) loadingEl.style.display = 'none';
         container.innerHTML =
             '<iframe src="' + videoUrl + '" ' +
+            'id="dyttzy-iframe" ' +
             'style="width:100%;height:100%;min-height:400px;border:0;" ' +
-            'allowfullscreen allow="autoplay; fullscreen"></iframe>';
+            'allowfullscreen allow="autoplay; fullscreen"></iframe>' +
+            // 验证码过期提示条：15秒后显示，用户可手动关闭
+            '<div id="dyttzy-captcha-hint" style="display:none;margin-top:8px;padding:10px 14px;' +
+            'background:#fff7ed;border:1px solid #fdba74;border-radius:8px;font-size:13px;color:#9a3412;">' +
+            '⚠️ 一直黑屏没画面？可能是电影天堂验证码过期了 → ' +
+            '<a href="https://dyttzy1.tv" target="_blank" style="color:#0284c7;text-decoration:underline;">去官网输一次验证码</a>' +
+            '，然后 <a href="javascript:location.reload()" style="color:#0284c7;text-decoration:underline;">刷新本页</a> 重试' +
+            '<span onclick="this.parentElement.style.display=\'none\'" style="float:right;cursor:pointer;">✕</span>' +
+            '</div>';
+        // 15秒后显示提示（如果视频正常播放，用户手动关闭即可）
+        setTimeout(function () {
+            var hint = document.getElementById('dyttzy-captcha-hint');
+            if (hint) hint.style.display = 'block';
+        }, 15000);
         return;
     }
 
