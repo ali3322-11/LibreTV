@@ -1,0 +1,190 @@
+/* ========== Netflix 风：Hero 大横幅 + 横滑行 ========== */
+
+.nf-hero {
+    position: relative;
+    height: 62vh;
+    min-height: 420px;
+    max-height: 640px;
+    overflow: hidden;
+    margin: 0 -16px 8px;
+}
+.nf-hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 22%;
+    transform: scale(1.02);
+}
+.nf-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to top, #0f0f13 4%, rgba(15,15,19,.55) 34%, rgba(15,15,19,.12) 62%, rgba(15,15,19,.45) 100%),
+        linear-gradient(to right, rgba(15,15,19,.85) 0%, rgba(15,15,19,.25) 45%, transparent 70%);
+}
+.nf-hero-content {
+    position: absolute;
+    left: 4%;
+    bottom: 12%;
+    max-width: 560px;
+    z-index: 2;
+}
+.nf-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 12px;
+}
+.nf-hero-badge::before {
+    content: "N";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: #e50914;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+.nf-hero-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 18px rgba(0,0,0,.6);
+}
+.nf-hero-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+    color: #d4d4d4;
+    margin-bottom: 12px;
+}
+.nf-hero-meta .rate { color: #46d369; font-weight: 700; }
+.nf-hero-desc {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #e5e5e5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 8px rgba(0,0,0,.7);
+}
+.nf-hero-btns { display: flex; gap: 12px; }
+.nf-btn-play, .nf-btn-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 26px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: transform .15s, background .15s;
+}
+.nf-btn-play { background: #fff; color: #000; }
+.nf-btn-play:hover { background: rgba(255,255,255,.8); transform: scale(1.03); }
+.nf-btn-info { background: rgba(109,109,110,.75); color: #fff; }
+.nf-btn-info:hover { background: rgba(109,109,110,.5); transform: scale(1.03); }
+
+/* 横滑行 */
+.nf-rows { padding: 6px 0 40px; }
+.nf-row { margin-bottom: 26px; position: relative; }
+.nf-row-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+    padding: 0 4%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+.nf-row-more {
+    font-size: 12px;
+    font-weight: 400;
+    color: #54b9c5;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .2s;
+    white-space: nowrap;
+}
+.nf-row:hover .nf-row-more { opacity: 1; }
+.nf-row-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 4%;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+.nf-row-scroll::-webkit-scrollbar { display: none; }
+.nf-card {
+    flex: 0 0 auto;
+    width: 158px;
+    cursor: pointer;
+    transition: transform .18s;
+    border-radius: 6px;
+}
+.nf-card:hover { transform: scale(1.07); z-index: 3; }
+.nf-card img {
+    width: 158px;
+    height: 224px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #1c1c22;
+    display: block;
+}
+.nf-card .t {
+    font-size: 13px;
+    color: #d4d4d4;
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.nf-card .r { font-size: 12px; color: #46d369; font-weight: 600; }
+.nf-card-loading {
+    flex: 0 0 auto;
+    width: 158px;
+    height: 224px;
+    border-radius: 6px;
+    background: linear-gradient(100deg, #1a1a20 40%, #23232b 50%, #1a1a20 60%);
+    background-size: 200% 100%;
+    animation: nf-shimmer 1.2s infinite;
+}
+@keyframes nf-shimmer { to { background-position: -200% 0; } }
+
+/* 浅色主题适配 */
+body.light .nf-hero-gradient {
+    background:
+        linear-gradient(to top, #f5f5f7 4%, rgba(245,245,247,.55) 34%, rgba(245,245,247,.12) 62%, rgba(245,245,247,.45) 100%),
+        linear-gradient(to right, rgba(245,245,247,.85) 0%, rgba(245,245,247,.25) 45%, transparent 70%);
+}
+body.light .nf-hero-title { color: #111; text-shadow: none; }
+body.light .nf-hero-desc { color: #333; text-shadow: none; }
+body.light .nf-hero-meta { color: #555; }
+body.light .nf-row-title { color: #111; }
+body.light .nf-card .t { color: #333; }
+body.light .nf-card img { background: #e5e5ea; }
+
+/* 移动端 */
+@media (max-width: 768px) {
+    .nf-hero { height: 46vh; min-height: 320px; margin: 0 -12px 4px; }
+    .nf-hero-content { left: 5%; right: 5%; bottom: 9%; }
+    .nf-hero-desc { -webkit-line-clamp: 2; font-size: 13px; }
+    .nf-btn-play, .nf-btn-info { padding: 8px 18px; font-size: 14px; }
+    .nf-card { width: 118px; }
+    .nf-card img { width: 118px; height: 168px; }
+    .nf-row-title { font-size: 16px; }
+}
