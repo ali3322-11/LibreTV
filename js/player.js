@@ -413,11 +413,13 @@ function initPlayer(videoUrl) {
 
     // 电影天堂的播放地址是分享页（非直链，dytt*.com 或 play.phimgood.com），用官方解析接口以 iframe 方式播放
     if (/(dytt[^/]*\.com|phimgood\.com)\/share\//i.test(videoUrl)) {
+        // 分享页在用户浏览器直接 iframe 打开（用户已过一次验证码，Cookie 有效）
+        // 不走解析服务器，因为服务器过不了人机验证
         const container = document.querySelector('#player');
         const loadingEl = document.getElementById('player-loading');
         if (loadingEl) loadingEl.style.display = 'none';
         container.innerHTML =
-            '<iframe src="' + DYTTZY_PARSE_API + encodeURIComponent(videoUrl) + '" ' +
+            '<iframe src="' + videoUrl + '" ' +
             'style="width:100%;height:100%;min-height:400px;border:0;" ' +
             'allowfullscreen allow="autoplay; fullscreen"></iframe>';
         return;
