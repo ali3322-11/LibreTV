@@ -999,12 +999,13 @@ function playVideo(url, vod_name, sourceCode, episodeIndex = 0, vodId = '') {
     // 获取当前路径作为返回页面
     let currentPath = window.location.href;
 
-    // 构建播放页面URL，使用watch.html作为中间跳转页
-    let watchUrl = `watch.html?id=${vodId || ''}&source=${sourceCode || ''}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}`;
+    // 直接跳转 player.html，跳过 watch.html 中间页
+    let watchUrl = `player.html?id=${vodId || ''}&source=${sourceCode || ''}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}`;
 
-    // 添加返回URL参数
+    // 添加返回URL参数（player.html 直接识别 returnUrl）
     if (currentPath.includes('index.html') || currentPath.endsWith('/')) {
-        watchUrl += `&back=${encodeURIComponent(currentPath)}`;
+        watchUrl += `&returnUrl=${encodeURIComponent(currentPath)}`;
+        try { localStorage.setItem('lastPageUrl', currentPath); } catch (e) {}
     }
 
     // 保存当前状态到localStorage
