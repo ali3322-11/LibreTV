@@ -516,7 +516,7 @@ async function fetchDoubanData(url) {
 }
 
 // 抽取渲染豆瓣卡片的逻辑到单独函数
-function renderDoubanCards(data, container) {
+async function renderDoubanCards(data, container) {
     // 创建文档片段以提高性能
     const fragment = document.createDocumentFragment();
     
@@ -530,7 +530,7 @@ function renderDoubanCards(data, container) {
         fragment.appendChild(emptyEl);
     } else {
         // 循环创建每个影视卡片
-        data.subjects.forEach(item => {
+        for (const item of data.subjects) {
             const card = document.createElement("div");
             card.className = "bg-[#111] hover:bg-[#222] transition-all duration-300 rounded-lg overflow-hidden flex flex-col transform hover:scale-105 shadow-md hover:shadow-lg";
             
@@ -544,19 +544,25 @@ function renderDoubanCards(data, container) {
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
             
-            // 处理图片URL
-            // 1. 直接使用豆瓣图片URL (添加no-referrer属性)
+            // 处理图片URL：豆瓣 CDN 强制要求 Referer，直接走带鉴权的代理
             const originalCoverUrl = item.cover;
+            let coverSrc = originalCoverUrl;
+            try {
+                const base = PROXY_URL + encodeURIComponent(originalCoverUrl);
+                coverSrc = (window.ProxyAuth && window.ProxyAuth.addAuthToProxyUrl)
+                    ? await window.ProxyAuth.addAuthToProxyUrl(base)
+                    : base;
+            } catch (e) { /* 保持原地址，靠 onerror 兜底 */ }
             
             
             // 为不同设备优化卡片布局
             card.innerHTML = `
                 <div class="relative w-full aspect-[2/3] overflow-hidden cursor-pointer" onclick="fillAndSearchWithDouban('${safeTitle}')">
-                    <img src="${originalCoverUrl}" alt="${safeTitle}"
+                    <img src="${coverSrc}" alt="${safeTitle}"
                         data-original-src="${originalCoverUrl}"
                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                         onerror="handleDoubanImgError(this)"
-                        loading="lazy" referrerpolicy="no-referrer">
+                        loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
                     <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-sm">
                         <span class="text-yellow-400">★</span> ${safeRate}
@@ -577,7 +583,7 @@ function renderDoubanCards(data, container) {
             `;
             
             fragment.appendChild(card);
-        });
+        }
     }
     
     // 清空并添加所有新元素
