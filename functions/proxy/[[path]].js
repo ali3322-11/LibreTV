@@ -251,7 +251,7 @@ export async function onRequest(context) {
         const targetHost = new URL(targetUrl).hostname;
         // 豆瓣图片 CDN 强制要求 Referer 为豆瓣主站，否则返回 418
         let referer = request.headers.get('Referer') || new URL(targetUrl).origin;
-        if (/\.doubanio\.com$/i.test(targetHost)) {
+        if (targetHost.toLowerCase().endsWith(".doubanio.com")) {
             referer = 'https://movie.douban.com/';
         }
         const headers = new Headers({
