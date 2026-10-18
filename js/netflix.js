@@ -63,6 +63,7 @@
             showHero(0);
             renderHeroDots();
             hero.classList.remove('hidden');
+            if (typeof window._bindHeroDrag === 'function') window._bindHeroDrag();
             // 8 秒自动轮换
             if (heroTimer) clearInterval(heroTimer);
             heroTimer = setInterval(function () {
@@ -112,6 +113,51 @@
         }
     }
     window.nfHeroGo = function (i) { showHero(i); };
+
+    // Hero 拖拽/滑动切换（鼠标 + 触屏）
+    function resetHeroTimer() {
+        if (heroTimer) clearInterval(heroTimer);
+        heroTimer = setInterval(function () {
+            showHero((heroIdx + 1) % heroList.length);
+        }, 8000);
+    }
+    function bindHeroDrag() {
+        var hero = document.getElementById('netflixHero');
+        if (!hero || hero._dragBound) return;
+        hero._dragBound = true;
+        var startX = 0, dragging = false;
+
+        function onStart(x) { startX = x; dragging = true; }
+        function onEnd(x) {
+            if (!dragging) return;
+            dragging = false;
+            var dx = x - startX;
+            if (Math.abs(dx) > 50 && heroList.length > 1) {
+                // 左滑 → 下一部，右滑 → 上一部
+                var next = dx < 0
+                    ? (heroIdx + 1) % heroList.length
+                    : (heroIdx - 1 + heroList.length) % heroList.length;
+                showHero(next);
+                resetHeroTimer();
+            }
+        }
+        // 鼠标
+        hero.addEventListener('mousedown', function (e) { onStart(e.clientX); });
+        hero.addEventListener('mouseup', function (e) { onEnd(e.clientX); });
+        hero.addEventListener('mouseleave', function () { dragging = false; });
+        // 触屏
+        hero.addEventListener('touchstart', function (e) {
+            onStart(e.touches[0].clientX);
+        }, { passive: true });
+        hero.addEventListener('touchend', function (e) {
+            onEnd(e.changedTouches[0].clientX);
+        }, { passive: true });
+        // 拖拽时禁用图片拖动默认行为
+        hero.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    }
+
+    // 暴露绑定函数供 renderHero 调用
+    window._bindHeroDrag = bindHeroDrag;
 
     // 渲染一行
     async function renderRow(rowId, type, tag) {
