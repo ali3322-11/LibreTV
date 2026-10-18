@@ -675,8 +675,9 @@ function initPlayer(videoUrl) {
         handleFullScreen(isFullScreen, true);
     });
 
-    // 全屏模式处理
+    // 全屏模式处理（进全屏前先退出小窗模式，否则小窗下全屏无效）
     art.on('fullscreen', function (isFullScreen) {
+        if (isFullScreen && art.mini) art.mini = false;
         handleFullScreen(isFullScreen, false);
     });
 
