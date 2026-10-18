@@ -1,0 +1,180 @@
+/*
+ * LibreTV 新版导航栏 + 首页排版
+ * 替代原来的悬浮按钮，更现代的布局
+ */
+
+/* ---------- 顶部导航栏 ---------- */
+.topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.75);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* 深色模式下的导航栏 */
+[data-theme="dark"] .topnav,
+html:not([data-theme]) .topnav {
+    background: rgba(15, 22, 34, 0.75);
+    border-bottom: 1px solid rgba(0, 204, 255, 0.12);
+}
+
+.topnav-inner {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topnav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0284c7;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.topnav-logo:hover {
+    transform: scale(1.03);
+}
+
+[data-theme="dark"] .topnav-logo,
+html:not([data-theme]) .topnav-logo {
+    color: #00ccff;
+}
+
+.topnav-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(to right, #0284c7, #e11d48);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .topnav-title,
+html:not([data-theme]) .topnav-title {
+    background: linear-gradient(to right, #00ccff, #ff3c78);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.topnav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.topnav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    background: rgba(255, 255, 255, 0.6);
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.topnav-btn:hover {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="dark"] .topnav-btn,
+html:not([data-theme]) .topnav-btn {
+    border-color: rgba(0, 204, 255, 0.15);
+    background: rgba(18, 27, 41, 0.6);
+    color: #e6f2ff;
+}
+
+[data-theme="dark"] .topnav-btn:hover,
+html:not([data-theme]) .topnav-btn:hover {
+    background: #00ccff;
+    border-color: #00ccff;
+    color: #0f1622;
+    box-shadow: 0 4px 12px rgba(0, 204, 255, 0.3);
+}
+
+/* ---------- 首页 hero 区 ---------- */
+.hero-compact {
+    margin-bottom: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+[data-theme="dark"] .hero-title,
+html:not([data-theme]) .hero-title {
+    color: #e6f2ff;
+}
+
+.hero-title .hero-dot {
+    background: linear-gradient(to right, #0284c7, #e11d48);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+[data-theme="dark"] .hero-sub,
+html:not([data-theme]) .hero-sub {
+    color: #8599b2;
+}
+
+/* ---------- 搜索框美化 ---------- */
+#searchArea .shadow-lg {
+    box-shadow: 0 8px 30px rgba(2, 132, 199, 0.12) !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(2, 132, 199, 0.15);
+    overflow: hidden;
+}
+
+[data-theme="dark"] #searchArea .shadow-lg,
+html:not([data-theme]) #searchArea .shadow-lg {
+    box-shadow: 0 8px 30px rgba(0, 204, 255, 0.1) !important;
+    border: 1px solid rgba(0, 204, 255, 0.15);
+}
+
+/* ---------- 结果卡片间距优化 ---------- */
+#results {
+    gap: 1.25rem !important;
+}
+
+/* ---------- 移动端适配 ---------- */
+@media (max-width: 640px) {
+    .topnav-title {
+        font-size: 1.15rem;
+    }
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    .topnav-btn {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
