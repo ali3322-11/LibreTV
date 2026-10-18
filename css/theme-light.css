@@ -128,3 +128,77 @@
 
 /* ---------- 开关按钮在浅色下的底色 ---------- */
 [data-theme="light"] .toggle-bg.bg-\[\#333\] { background-color: #cbd5e1 !important; }
+
+/* ---------- 复选框（浅色下可见） ---------- */
+[data-theme="light"] .form-checkbox {
+    background-color: #ffffff !important;
+    border: 1px solid #94a3b8 !important;
+}
+[data-theme="light"] .form-checkbox:checked {
+    background-color: #0284c7 !important;
+    border-color: #0284c7 !important;
+}
+[data-theme="light"] .form-checkbox:checked::after {
+    border-color: white !important;
+}
+
+/* ---------- 开关切换（toggle）浅色适配 ---------- */
+[data-theme="light"] .toggle-bg {
+    background-color: #cbd5e1 !important;
+}
+[data-theme="light"] input:checked + .toggle-bg {
+    background-color: #0284c7 !important;
+}
+[data-theme="light"] .toggle-dot {
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ---------- 播放器页面浅色适配 ---------- */
+[data-theme="light"] body {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .player-header-fixed {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    backdrop-filter: blur(12px);
+}
+[data-theme="light"] .player-container {
+    background-color: #ffffff !important;
+}
+/* 播放器本身保持黑色（视频区域） */
+[data-theme="light"] #player,
+[data-theme="light"] .artplayer-app {
+    background-color: #000 !important;
+}
+/* 选集按钮浅色适配 */
+[data-theme="light"] .episode-btn {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #334155 !important;
+}
+[data-theme="light"] .episode-btn:hover {
+    background-color: #e0f2fe !important;
+    border-color: #0284c7 !important;
+}
+[data-theme="light"] .episode-btn.active {
+    background-color: #0284c7 !important;
+    color: #fff !important;
+    border-color: #0284c7 !important;
+}
+/* 资源信息条 */
+[data-theme="light"] #resourceInfoBarContainer {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+/* 下拉选择框 */
+[data-theme="light"] select {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+/* 单选/多选文字 */
+[data-theme="light"] label {
+    color: #334155 !important;
+}
