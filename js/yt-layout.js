@@ -28,6 +28,7 @@ window.sidebarNav = function (type, el) {
     }
 
     if (type === 'home') {
+        try { if (typeof doubanForcedTags !== 'undefined') doubanForcedTags = null; } catch (e) {}
         if (typeof resetToHome === 'function') resetToHome();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
@@ -42,7 +43,17 @@ window.sidebarNav = function (type, el) {
     // 电影 → 电影tab/热门；电视剧 → 电视剧tab/热门；综艺 → 电视剧tab/综艺；动漫 → 电视剧tab/日本动画
     var wantTv = (type === 'tv' || type === 'variety' || type === 'anime');
     var targetTab = wantTv ? 'tv' : 'movie';
-    var targetTag = type === 'variety' ? '综艺' : (type === 'anime' ? '日本动画' : '热门');
+    // 专属标签组：动漫/综艺显示按国家分子类，其他用热门
+    var forcedTags = null;
+    var targetTag = '热门';
+    if (type === 'anime') {
+        forcedTags = (typeof animeTags !== 'undefined') ? animeTags : null;
+        targetTag = '日本动画';
+    } else if (type === 'variety') {
+        forcedTags = (typeof varietyTags !== 'undefined') ? varietyTags : null;
+        targetTag = '国产综艺';
+    }
+    try { if (typeof doubanForcedTags !== 'undefined') doubanForcedTags = forcedTags; } catch (e) {}
 
     try {
         // 1. 切换 tab（更新全局状态 + 按钮样式）
