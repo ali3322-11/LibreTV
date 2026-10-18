@@ -682,6 +682,8 @@ async function search() {
         if (doubanArea) {
             doubanArea.classList.add('hidden');
         }
+        // Netflix 首页：搜索时隐藏 hero+横滑行
+        if (typeof window.nfHomeShow === 'function') window.nfHomeShow(false);
 
         const resultsDiv = document.getElementById('results');
 
