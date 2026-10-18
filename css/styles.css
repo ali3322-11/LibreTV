@@ -988,6 +988,25 @@ body {
     scrollbar-color: #444 #222;
 }
 
+/* 浅色主题：弹窗详情卡跟随主题 */
+[data-theme="light"] #modal .modal-detail-info {
+    background: linear-gradient(135deg, #f8f9fb, #eef1f5);
+    border: 1px solid #dde3ea;
+}
+[data-theme="light"] #modal .detail-label {
+    color: #6b7280;
+}
+[data-theme="light"] #modal .detail-value {
+    color: #111827;
+}
+[data-theme="light"] #modal .detail-desc {
+    border-top: 1px solid #e5e7eb;
+}
+[data-theme="light"] #modal .detail-desc-content {
+    color: #374151;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
 #modal .detail-desc-content::-webkit-scrollbar {
     width: 6px;
 }
