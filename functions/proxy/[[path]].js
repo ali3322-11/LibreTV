@@ -156,6 +156,20 @@ export async function onRequest(context) {
                     return null;
                  }
              }
+             // SSRF 防护：拦截内网/云元数据地址
+             try {
+                 const _targetHost = new URL(decodedUrl).hostname.toLowerCase();
+                 const _blocked = ['localhost', 'metadata.google.internal', '169.254.169.254'];
+                 const _prefixes = ['10.', '192.168.', '172.16.', '172.17.', '172.18.', '172.19.',
+                     '172.20.', '172.21.', '172.22.', '172.23.', '172.24.', '172.25.', '172.26.',
+                     '172.27.', '172.28.', '172.29.', '172.30.', '172.31.', '127.', '0.'];
+                 if (_blocked.includes(_targetHost) ||
+                     _prefixes.some(p => _targetHost.startsWith(p)) ||
+                     _targetHost === '[::1]' || _targetHost.endsWith('.local')) {
+                     logDebug(`SSRF拦截: ${decodedUrl}`);
+                     return null;
+                 }
+             } catch (e) { return null; }
              return decodedUrl;
 
         } catch (e) {
@@ -168,7 +182,11 @@ export async function onRequest(context) {
     function createResponse(body, status = 200, headers = {}) {
         const responseHeaders = new Headers(headers);
         // 关键：添加 CORS 跨域头，允许前端 JS 访问代理后的响应
-        responseHeaders.set("Access-Control-Allow-Origin", "*"); // 允许任何来源访问
+        // CORS 收紧：只允许本站域名，防第三方网站盗用代理
+        const _reqOrigin = request.headers.get('Origin') || '';
+        if (_reqOrigin === 'https://tv.newpaopao.dpdns.org' || _reqOrigin.endsWith('.dpdns.org')) {
+            responseHeaders.set("Access-Control-Allow-Origin", _reqOrigin);
+        }
         responseHeaders.set("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS"); // 允许的方法
         responseHeaders.set("Access-Control-Allow-Headers", "*"); // 允许所有请求头
 
