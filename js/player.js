@@ -726,6 +726,11 @@ function initPlayer(videoUrl) {
     setupLongPressSpeedControl();
 
     // 视频播放结束事件
+    // 暂停时立即保存进度（不等30秒间隔）
+    art.on('pause', function () {
+        saveCurrentProgress();
+    });
+
     art.on('video:ended', function () {
         videoHasEnded = true;
 
@@ -1230,6 +1235,15 @@ function formatTime(seconds) {
 }
 
 // 开始定期保存播放进度
+// 页面隐藏/关闭时保存进度（全局单例）
+if (!window.__libretvProgressUnloadBound) {
+    window.__libretvProgressUnloadBound = true;
+    window.addEventListener('pagehide', function () { saveCurrentProgress(); });
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') saveCurrentProgress();
+    });
+}
+
 function startProgressSaveInterval() {
     // 清除可能存在的旧计时器
     if (progressSaveInterval) {
