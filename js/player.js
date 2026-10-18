@@ -411,8 +411,8 @@ function initPlayer(videoUrl) {
         art = null;
     }
 
-    // 电影天堂的播放地址是分享页（非直链），用官方解析接口以 iframe 方式播放
-    if (/dytt[^/]*\.com\/share\//i.test(videoUrl)) {
+    // 电影天堂的播放地址是分享页（非直链，dytt*.com 或 play.phimgood.com），用官方解析接口以 iframe 方式播放
+    if (/(dytt[^/]*\.com|phimgood\.com)\/share\//i.test(videoUrl)) {
         const container = document.querySelector('#player');
         const loadingEl = document.getElementById('player-loading');
         if (loadingEl) loadingEl.style.display = 'none';
