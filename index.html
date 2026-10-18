@@ -20,6 +20,7 @@
     <script src="libs/tailwindcss.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/yt-layout.css">
+    <link rel="stylesheet" href="css/netflix.css">
     <link rel="stylesheet" href="css/theme-cinema.css">
     <link rel="stylesheet" href="css/theme-light.css">
     <link rel="stylesheet" href="css/tablet.css">
@@ -267,6 +268,47 @@
 
     <main class="yt-main">
 
+            <!-- Netflix 风 Hero 大横幅 -->
+            <section id="netflixHero" class="nf-hero hidden">
+                <div class="nf-hero-bg" id="nfHeroBg"></div>
+                <div class="nf-hero-gradient"></div>
+                <div class="nf-hero-content">
+                    <div class="nf-hero-badge">泡泡影视推荐</div>
+                    <h1 class="nf-hero-title" id="nfHeroTitle">加载中…</h1>
+                    <div class="nf-hero-meta" id="nfHeroMeta"></div>
+                    <p class="nf-hero-desc" id="nfHeroDesc"></p>
+                    <div class="nf-hero-btns">
+                        <button class="nf-btn-play" id="nfHeroPlay" onclick="nfHeroPlayClick()">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            立即播放
+                        </button>
+                        <button class="nf-btn-info" onclick="nfHeroSearch()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                            搜索此片
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Netflix 风横滑内容行 -->
+            <div id="netflixRows" class="nf-rows hidden">
+                <section class="nf-row" data-cat="movie" data-tag="热门">
+                    <h2 class="nf-row-title">热门电影 <span class="nf-row-more" onclick="sidebarNav('movie',null)">查看全部 ›</span></h2>
+                    <div class="nf-row-scroll" id="nfRow-movie"></div>
+                </section>
+                <section class="nf-row" data-cat="tv" data-tag="热门">
+                    <h2 class="nf-row-title">热播剧集 <span class="nf-row-more" onclick="sidebarNav('tv',null)">查看全部 ›</span></h2>
+                    <div class="nf-row-scroll" id="nfRow-tv"></div>
+                </section>
+                <section class="nf-row" data-cat="tv" data-tag="综艺">
+                    <h2 class="nf-row-title">综艺 <span class="nf-row-more" onclick="sidebarNav('variety',null)">查看全部 ›</span></h2>
+                    <div class="nf-row-scroll" id="nfRow-variety"></div>
+                </section>
+                <section class="nf-row" data-cat="tv" data-tag="日本动画">
+                    <h2 class="nf-row-title">动漫 <span class="nf-row-more" onclick="sidebarNav('anime',null)">查看全部 ›</span></h2>
+                    <div class="nf-row-scroll" id="nfRow-anime"></div>
+                </section>
+            </div>
 
             <!-- 豆瓣热门推荐区域 -->
             <div id="doubanArea" class="w-full my-8 hidden">
@@ -428,6 +470,7 @@
     </script>
     <script src="js/theme.js"></script>
     <script src="js/yt-layout.js"></script>
+    <script src="js/netflix.js"></script>
     <script src="js/config.js"></script>
     <script src="js/proxy-auth.js"></script>
     <script src="js/ui.js"></script>
