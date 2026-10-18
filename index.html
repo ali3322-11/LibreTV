@@ -19,6 +19,7 @@
     
     <script src="libs/tailwindcss.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/yt-layout.css">
     <link rel="stylesheet" href="css/theme-cinema.css">
     <link rel="stylesheet" href="css/theme-light.css">
     <link rel="stylesheet" href="css/tablet.css">
@@ -26,53 +27,89 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body class="page-bg text-white">
-    <!-- 顶部导航栏 -->
-    <nav class="topnav">
-        <div class="topnav-inner">
-            <a href="#" onclick="resetToHome(); return false;" class="topnav-logo" aria-label="首页">
+    <!-- YouTube 式顶栏 -->
+    <header class="yt-topbar">
+        <div class="yt-topbar-left">
+            <button class="yt-icon-btn" onclick="toggleSidebar()" aria-label="菜单">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <a href="#" onclick="resetToHome(); return false;" class="yt-logo" aria-label="首页">
                 <svg class="w-8 h-8" viewBox="0 0 48 48" fill="none" aria-hidden="true">
                     <defs>
-                        <linearGradient id="bubbleGrad" x1="0" y1="0" x2="1" y2="1">
+                        <linearGradient id="bubbleGrad2" x1="0" y1="0" x2="1" y2="1">
                             <stop offset="0" stop-color="#f6121d"/>
                             <stop offset="1" stop-color="#a3050d"/>
                         </linearGradient>
-                        <radialGradient id="bubbleShine" cx="0.35" cy="0.3" r="0.6">
-                            <stop offset="0" stop-color="white" stop-opacity="0.45"/>
-                            <stop offset="1" stop-color="white" stop-opacity="0"/>
-                        </radialGradient>
                     </defs>
-                    <circle cx="23" cy="25" r="20" fill="url(#bubbleGrad)"/>
-                    <circle cx="23" cy="25" r="20" fill="url(#bubbleShine)"/>
+                    <circle cx="23" cy="25" r="20" fill="url(#bubbleGrad2)"/>
                     <circle cx="39" cy="11" r="5" fill="#e50914" opacity="0.65"/>
-                    <circle cx="9" cy="37" r="3.2" fill="#e50914" opacity="0.45"/>
                     <path d="M19 17.5 L32 25 L19 32.5 Z" fill="white"/>
-                    <ellipse cx="16.5" cy="15.5" rx="5.5" ry="3.5" fill="white" opacity="0.28" transform="rotate(-25 16.5 15.5)"/>
                 </svg>
-                <span class="topnav-title">泡泡影视</span>
+                <span>泡泡影视</span>
             </a>
-            <div class="topnav-actions">
-                <button onclick="toggleTheme()" class="topnav-btn" aria-label="切换主题" title="切换深色/浅色">
-                    <svg class="w-5 h-5 icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg class="w-5 h-5 icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                </button>
-                <button onclick="toggleHistory(event)" class="topnav-btn" aria-label="观看历史" title="观看历史">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </button>
-                <button onclick="toggleSettings(event)" class="topnav-btn" aria-label="打开设置" title="设置">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                </button>
+        </div>
+        <div class="yt-topbar-center">
+            <div id="searchArea" class="yt-search-wrap">
+                <div class="yt-search-row">
+                    <input type="text" id="searchInput" placeholder="搜索你喜欢的视频..." autocomplete="off" aria-label="视频搜索框" oninput="toggleClearButton()">
+                    <button id="clearSearchInput" class="yt-clear-btn hidden" onclick="clearSearchInput()" aria-label="清空搜索框" title="清空">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                    <button class="yt-search-btn" onclick="search()" aria-label="搜索">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </button>
+                </div>
+                <div id="recentSearches" class="yt-recent-dropdown" aria-label="最近搜索记录"></div>
             </div>
         </div>
-    </nav>
+        <div class="yt-topbar-right">
+            <button onclick="toggleTheme()" class="yt-icon-btn" aria-label="切换主题" title="切换主题">
+                <svg class="w-5 h-5 icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <svg class="w-5 h-5 icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+            <button onclick="toggleHistory(event)" class="yt-icon-btn" aria-label="观看历史" title="观看历史">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>
+            <button onclick="toggleSettings(event)" class="yt-icon-btn" aria-label="设置" title="设置">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 左侧边栏 -->
+    <aside class="yt-sidebar" id="ytSidebar">
+        <nav class="yt-sidebar-nav">
+            <button class="yt-nav-item active" onclick="sidebarNav('home', this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>首页</span>
+            </button>
+            <button class="yt-nav-item" onclick="sidebarNav('movie', this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+                <span>电影</span>
+            </button>
+            <button class="yt-nav-item" onclick="sidebarNav('tv', this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>电视剧</span>
+            </button>
+            <button class="yt-nav-item" onclick="sidebarNav('variety', this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span>综艺</span>
+            </button>
+            <button class="yt-nav-item" onclick="sidebarNav('anime', this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>动漫</span>
+            </button>
+            <div class="yt-sidebar-divider"></div>
+            <button class="yt-nav-item" onclick="toggleHistory(event)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>历史记录</span>
+            </button>
+            <button class="yt-nav-item" onclick="toggleSettings(event)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>设置</span>
+            </button>
+        </nav>
+    </aside>
     
     <!-- 历史记录面板 - 标题居中 -->
     <div id="historyPanel" class="history-panel fixed left-0 top-0 h-full bg-[#111] border-r border-[#333] p-6 z-40 transform -translate-x-full transition-transform duration-300" aria-label="观看历史" aria-hidden="true">
@@ -217,67 +254,20 @@
         </div>
     </div>
 
-    <main class="cinema-main">
-        <!-- 影院式 Hero 横幅 -->
-        <section class="cinema-hero">
-            <div class="cinema-hero-glow"></div>
-            <div class="cinema-hero-inner">
-                <h1 class="cinema-title">想看什么<span class="cinema-title-accent">，</span>搜一下</h1>
-                <p class="cinema-subtitle">电影 / 电视剧 / 综艺 / 动漫 —— 输入片名，一搜即看</p>
+    <!-- 分类快捷条 -->
+    <div class="yt-chips" id="ytChips">
+        <button class="yt-chip active" onclick="sidebarNav('home', this)">全部</button>
+        <button class="yt-chip" onclick="fillAndSearch('哪吒之魔童闹海')">哪吒2</button>
+        <button class="yt-chip" onclick="fillAndSearch('庆余年')">庆余年</button>
+        <button class="yt-chip" onclick="fillAndSearch('繁花')">繁花</button>
+        <button class="yt-chip" onclick="fillAndSearch('周处除三害')">周处除三害</button>
+        <button class="yt-chip" onclick="sidebarNav('movie', this)">热门电影</button>
+        <button class="yt-chip" onclick="sidebarNav('tv', this)">热门剧集</button>
+    </div>
 
-                <div id="searchArea" class="cinema-search">
-                <div class="w-full max-w-2xl">
-                    <div class="flex items-stretch mb-3 h-14 shadow-lg rounded-lg overflow-hidden">
-                        <!-- 首页按钮 -->
-                        <button onclick="resetToHome()" 
-                                class="w-20 sm:w-24 flex items-center justify-center bg-white text-black font-medium hover:bg-gray-200 transition-colors" 
-                                aria-label="返回首页" title="返回首页">
-                            首页
-                        </button>
-                        <!-- 搜索输入 -->
-                        <input type="text" 
-                               id="searchInput" 
-                               class="flex-1 bg-[#111] border-y border-[#333] text-white px-6 py-0 focus:outline-none transition-colors min-w-0" 
-                               placeholder="搜索你喜欢的视频..." 
-                               autocomplete="off"
-                               aria-label="视频搜索框"
-                               oninput="toggleClearButton()">
-                        <!-- 清空按钮 -->
-                        <button id="clearSearchInput" 
-                                class="flex pr-2 bg-[#111] border-y border-[#333] items-center justify-center text-gray-400 hover:text-white hidden"
-                                onclick="clearSearchInput()"
-                                aria-label="清空搜索框"
-                                title="清空搜索框">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                        <!-- 搜索按钮 -->
-                        <button onclick="search()" 
-                                class="w-20 sm:w-24 flex items-center justify-center bg-white text-black font-medium hover:bg-gray-200 transition-colors" 
-                                aria-label="搜索按钮">
-                            搜索
-                        </button>
-                    </div>
-                    
-                    <!-- 添加最近搜索记录部分 -->
-                    <div id="recentSearches" class="mt-4 flex flex-wrap gap-2" aria-label="最近搜索记录">
-                        <!-- 这里会动态插入最近的搜索记录 -->
-                    </div>
-                </div>
-                <div class="cinema-quick">
-                    <span class="cinema-quick-label">热门</span>
-                    <button onclick="fillAndSearch('哪吒之魔童闹海')">哪吒2</button>
-                    <button onclick="fillAndSearch('庆余年')">庆余年</button>
-                    <button onclick="fillAndSearch('繁花')">繁花</button>
-                    <button onclick="fillAndSearch('周处除三害')">周处除三害</button>
-                </div>
-            </div>
-        </div>
-        </section>
+    <main class="yt-main">
 
-        <!-- 内容区 -->
-        <div class="cinema-content">
+
             <!-- 豆瓣热门推荐区域 -->
             <div id="doubanArea" class="w-full my-8 hidden">
                 <div class="mx-auto max-w-screen-xl px-2">
@@ -325,7 +315,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     <!-- 页脚区域 -->
@@ -438,6 +427,7 @@
         window._jsSha256 = window.sha256;
     </script>
     <script src="js/theme.js"></script>
+    <script src="js/yt-layout.js"></script>
     <script src="js/config.js"></script>
     <script src="js/proxy-auth.js"></script>
     <script src="js/ui.js"></script>

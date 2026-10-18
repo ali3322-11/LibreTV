@@ -1,0 +1,287 @@
+/*
+ * YouTube 式布局：顶栏 + 左侧边栏 + 内容区
+ * 主题无关的布局，颜色用 CSS 变量（影院/浅色主题各自覆盖）
+ */
+
+/* ---------- 顶栏 ---------- */
+.yt-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+    z-index: 50;
+    background: rgba(10, 10, 13, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.yt-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.yt-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+}
+.yt-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #e5e5e5;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+.yt-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 顶栏搜索 */
+.yt-topbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 auto;
+}
+.yt-search-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+}
+.yt-search-row {
+    display: flex;
+    align-items: stretch;
+    height: 42px;
+    border-radius: 9999px;
+    overflow: hidden;
+    background: #1a1a20;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.yt-search-row:focus-within {
+    border-color: rgba(229, 9, 20, 0.6);
+    box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.15);
+}
+.yt-search-row input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    padding: 0 20px;
+    font-size: 0.95rem;
+}
+.yt-search-row input::placeholder {
+    color: #6b6b76;
+}
+.yt-clear-btn {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: #a3a3a3;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+.yt-clear-btn:hover {
+    color: #fff;
+}
+.yt-search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    background: #e50914;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.yt-search-btn:hover {
+    background: #f6121d;
+}
+.yt-recent-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #1a1a20;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    z-index: 60;
+}
+.yt-recent-dropdown:empty {
+    display: none;
+}
+.yt-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* ---------- 侧边栏 ---------- */
+.yt-sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    padding: 16px 12px;
+    overflow-y: auto;
+    z-index: 40;
+    background: rgba(10, 10, 13, 0.95);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 0.25s ease, width 0.25s ease;
+}
+.yt-sidebar.collapsed {
+    transform: translateX(-100%);
+}
+.yt-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.yt-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #d4d4d8;
+    font-size: 0.92rem;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s ease, color 0.2s ease;
+    width: 100%;
+}
+.yt-nav-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+}
+.yt-nav-item.active {
+    background: rgba(229, 9, 20, 0.14);
+    color: #fff;
+    font-weight: 600;
+}
+.yt-nav-item.active svg {
+    color: #e50914;
+}
+.yt-sidebar-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 12px 8px;
+}
+
+/* ---------- 分类快捷条 ---------- */
+.yt-chips {
+    position: fixed;
+    top: 60px;
+    left: 240px;
+    right: 0;
+    display: flex;
+    gap: 10px;
+    padding: 12px 24px;
+    overflow-x: auto;
+    z-index: 30;
+    background: rgba(10, 10, 13, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    scrollbar-width: none;
+    transition: left 0.25s ease;
+}
+.yt-chips::-webkit-scrollbar {
+    display: none;
+}
+body.sidebar-collapsed .yt-chips {
+    left: 0;
+}
+.yt-chip {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid transparent;
+    color: #d4d4d8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.yt-chip:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #fff;
+}
+.yt-chip.active {
+    background: #e50914;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ---------- 主内容区 ---------- */
+.yt-main {
+    margin-top: 60px;
+    margin-left: 240px;
+    padding: 68px 28px 40px;
+    min-height: calc(100vh - 60px);
+    min-height: calc(100dvh - 60px);
+    transition: margin-left 0.25s ease;
+}
+body.sidebar-collapsed .yt-main {
+    margin-left: 0;
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 768px) {
+    .yt-sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+    .yt-sidebar.open {
+        transform: translateX(0);
+        box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+    }
+    .yt-sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    .yt-chips {
+        left: 0;
+        padding: 10px 16px;
+    }
+    .yt-main {
+        margin-left: 0;
+        padding: 60px 14px 30px;
+    }
+    .yt-topbar-center {
+        max-width: none;
+    }
+    .yt-logo span {
+        display: none;
+    }
+}

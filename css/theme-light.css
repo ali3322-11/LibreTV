@@ -331,3 +331,80 @@
         padding: 5.5rem 1rem 3rem;
     }
 }
+
+/* ========== YouTube 布局浅色主题 ========== */
+[data-theme="light"] .yt-topbar {
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid #e2e8f0;
+}
+[data-theme="light"] .yt-logo {
+    color: #0f172a;
+}
+[data-theme="light"] .yt-icon-btn {
+    color: #475569;
+}
+[data-theme="light"] .yt-icon-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+[data-theme="light"] .yt-search-row {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+[data-theme="light"] .yt-search-row:focus-within {
+    border-color: rgba(2, 132, 199, 0.6);
+    box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.12);
+}
+[data-theme="light"] .yt-search-row input {
+    color: #0f172a;
+}
+[data-theme="light"] .yt-search-row input::placeholder {
+    color: #94a3b8;
+}
+[data-theme="light"] .yt-search-btn {
+    background: #0284c7;
+}
+[data-theme="light"] .yt-search-btn:hover {
+    background: #0369a1;
+}
+[data-theme="light"] .yt-recent-dropdown {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+[data-theme="light"] .yt-sidebar {
+    background: rgba(255, 255, 255, 0.96);
+    border-right: 1px solid #e2e8f0;
+}
+[data-theme="light"] .yt-nav-item {
+    color: #475569;
+}
+[data-theme="light"] .yt-nav-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #0f172a;
+}
+[data-theme="light"] .yt-nav-item.active {
+    background: rgba(2, 132, 199, 0.1);
+    color: #0f172a;
+}
+[data-theme="light"] .yt-nav-item.active svg {
+    color: #0284c7;
+}
+[data-theme="light"] .yt-sidebar-divider {
+    background: #e2e8f0;
+}
+[data-theme="light"] .yt-chips {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid #e2e8f0;
+}
+[data-theme="light"] .yt-chip {
+    background: #f1f5f9;
+    color: #475569;
+}
+[data-theme="light"] .yt-chip:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+[data-theme="light"] .yt-chip.active {
+    background: #0284c7;
+    color: #fff;
+}
