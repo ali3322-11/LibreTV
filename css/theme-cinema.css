@@ -283,3 +283,162 @@
 /* ---------- 主题切换按钮图标 ---------- */
 [data-theme="cinema"] .icon-sun { display: block; }
 [data-theme="cinema"] .icon-moon { display: none; }
+
+/* ========== 影院式布局（v2） ========== */
+
+/* 主容器 */
+[data-theme="cinema"] .cinema-main {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hero 横幅 */
+[data-theme="cinema"] .cinema-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 7rem 1.5rem 4rem;
+    text-align: center;
+}
+[data-theme="cinema"] .cinema-hero-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 60% 45% at 50% 0%, rgba(229, 9, 20, 0.14), transparent 70%),
+        radial-gradient(ellipse 40% 30% at 15% 100%, rgba(229, 9, 20, 0.05), transparent),
+        radial-gradient(ellipse 40% 30% at 85% 100%, rgba(229, 9, 20, 0.05), transparent);
+}
+[data-theme="cinema"] .cinema-hero-inner {
+    position: relative;
+    max-width: 56rem;
+    margin: 0 auto;
+}
+
+/* 徽章 */
+[data-theme="cinema"] .cinema-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(229, 9, 20, 0.1);
+    border: 1px solid rgba(229, 9, 20, 0.3);
+    color: #ff6b74;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+}
+[data-theme="cinema"] .cinema-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #e50914;
+    box-shadow: 0 0 10px #e50914;
+    animation: cinema-pulse 2s ease-in-out infinite;
+}
+@keyframes cinema-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* 大标题 */
+[data-theme="cinema"] .cinema-title {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.9);
+}
+[data-theme="cinema"] .cinema-title-accent {
+    color: #e50914;
+}
+[data-theme="cinema"] .cinema-subtitle {
+    color: #a3a3a3;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 2.2rem;
+}
+
+/* 搜索区 */
+[data-theme="cinema"] .cinema-search {
+    max-width: 42rem;
+    margin: 0 auto 1.8rem;
+}
+[data-theme="cinema"] .cinema-search .shadow-lg {
+    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.07), 0 0 40px rgba(229, 9, 20, 0.08) !important;
+    border-radius: 12px;
+}
+
+/* 热门快捷标签 */
+[data-theme="cinema"] .cinema-quick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+[data-theme="cinema"] .cinema-quick-label {
+    color: #6b6b76;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+[data-theme="cinema"] .cinema-quick button {
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #d4d4d8;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+[data-theme="cinema"] .cinema-quick button:hover {
+    background: rgba(229, 9, 20, 0.15);
+    border-color: rgba(229, 9, 20, 0.5);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* 内容区 */
+[data-theme="cinema"] .cinema-content {
+    flex: 1;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+}
+
+/* 页脚：极简 */
+[data-theme="cinema"] .cinema-footer {
+    margin-top: auto;
+    padding: 1.5rem 1rem;
+    background: rgba(10, 10, 13, 0.9) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    text-align: center;
+}
+[data-theme="cinema"] .cinema-footer-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #52525b;
+    font-size: 0.8rem;
+}
+[data-theme="cinema"] .cinema-footer-dot {
+    opacity: 0.5;
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+    [data-theme="cinema"] .cinema-hero {
+        padding: 5.5rem 1rem 3rem;
+    }
+    [data-theme="cinema"] .cinema-badge {
+        font-size: 0.72rem;
+        margin-bottom: 1.2rem;
+    }
+}
