@@ -1,6 +1,6 @@
 // LibreTV 主题切换（影院/浅色），偏好存 localStorage，默认影院
 (function () {
-    var KEY = 'libretv-theme';
+    var KEY = 'libretv-theme-v2';
     function getTheme() {
         try {
             var t = localStorage.getItem(KEY);

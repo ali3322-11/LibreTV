@@ -202,3 +202,132 @@
 [data-theme="light"] label {
     color: #334155 !important;
 }
+
+/* ========== 新布局在浅色主题下的样式 ========== */
+[data-theme="light"] .cinema-main {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+[data-theme="light"] .cinema-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 7rem 1.5rem 4rem;
+    text-align: center;
+    background: linear-gradient(180deg, #eef4fa, #f8fafc);
+}
+[data-theme="light"] .cinema-hero-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 45% at 50% 0%, rgba(2, 132, 199, 0.1), transparent 70%);
+}
+[data-theme="light"] .cinema-hero-inner {
+    position: relative;
+    max-width: 56rem;
+    margin: 0 auto;
+}
+[data-theme="light"] .cinema-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(2, 132, 199, 0.08);
+    border: 1px solid rgba(2, 132, 199, 0.25);
+    color: #0284c7;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+}
+[data-theme="light"] .cinema-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #0284c7;
+    box-shadow: 0 0 10px #0284c7;
+    animation: cinema-pulse 2s ease-in-out infinite;
+}
+[data-theme="light"] .cinema-title {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+}
+[data-theme="light"] .cinema-title-accent {
+    color: #0284c7;
+}
+[data-theme="light"] .cinema-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 2.2rem;
+}
+[data-theme="light"] .cinema-search {
+    max-width: 42rem;
+    margin: 0 auto 1.8rem;
+}
+[data-theme="light"] .cinema-quick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+[data-theme="light"] .cinema-quick-label {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+[data-theme="light"] .cinema-quick button {
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+[data-theme="light"] .cinema-quick button:hover {
+    border-color: #0284c7;
+    color: #0284c7;
+    transform: translateY(-1px);
+}
+[data-theme="light"] .cinema-content {
+    flex: 1;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+}
+[data-theme="light"] .cinema-footer {
+    margin-top: auto;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+}
+[data-theme="light"] .cinema-footer-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+/* 浅色导航栏 logo 文字 */
+[data-theme="light"] .topnav-title {
+    color: #0f172a !important;
+    background: none !important;
+    -webkit-text-fill-color: #0f172a !important;
+}
+@media (max-width: 640px) {
+    [data-theme="light"] .cinema-hero {
+        padding: 5.5rem 1rem 3rem;
+    }
+}
