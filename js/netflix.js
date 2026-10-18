@@ -98,13 +98,15 @@
             (function (idx) {
                 var d = document.createElement('span');
                 d.className = 'nf-dot' + (idx === heroIdx ? ' active' : '');
-                d.onclick = function () {
+                var goFn = function () {
                     if (heroTimer) clearInterval(heroTimer);
                     showHero(idx);
                     heroTimer = setInterval(function () {
                         showHero((heroIdx + 1) % heroList.length);
                     }, 8000);
                 };
+                d.onclick = goFn;
+                d.onmouseenter = goFn;
                 box.appendChild(d);
             })(i);
         }
