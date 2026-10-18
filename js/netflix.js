@@ -154,6 +154,24 @@
         }, { passive: true });
         // 拖拽时禁用图片拖动默认行为
         hero.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        // 触控板双指左右滑动切换（wheel 横向）
+        var wheelCooldown = 0;
+        hero.addEventListener('wheel', function (e) {
+            // 只处理明显的横向滑动（纵向滚动不管）
+            if (Math.abs(e.deltaX) < 30 || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+            var now = Date.now();
+            if (now - wheelCooldown < 900) return; // 节流，避免一次滑触发多次
+            wheelCooldown = now;
+            e.preventDefault();
+            if (heroList.length > 1) {
+                var next = e.deltaX > 0
+                    ? (heroIdx + 1) % heroList.length
+                    : (heroIdx - 1 + heroList.length) % heroList.length;
+                showHero(next);
+                resetHeroTimer();
+            }
+        }, { passive: false });
     }
 
     // 暴露绑定函数供 renderHero 调用
