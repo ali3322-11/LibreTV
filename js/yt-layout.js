@@ -38,28 +38,49 @@ window.sidebarNav = function (type, el) {
     if (doubanArea) doubanArea.classList.remove('hidden');
     if (typeof window.nfHomeShow === 'function' && type !== 'home') window.nfHomeShow(false);
 
-    // 切换电影/电视剧 tab
-    // 电影 → 电影tab；电视剧/综艺/动漫 → 电视剧tab（综艺、动漫标签都在电视剧tab下）
+    // 切换电影/电视剧 tab + 标签：直接设置状态，不模拟点击（更可靠）
+    // 电影 → 电影tab/热门；电视剧 → 电视剧tab/热门；综艺 → 电视剧tab/综艺；动漫 → 电视剧tab/日本动画
     var wantTv = (type === 'tv' || type === 'variety' || type === 'anime');
-    var toggleBtn = document.getElementById(wantTv ? 'douban-tv-toggle' : 'douban-movie-toggle');
-    if (toggleBtn) toggleBtn.click();
+    var targetTab = wantTv ? 'tv' : 'movie';
+    var targetTag = type === 'variety' ? '综艺' : (type === 'anime' ? '日本动画' : '热门');
 
-    // 综艺/动漫：点对应标签（带重试，等标签渲染完）
-    // 注意：豆瓣标签名是"综艺"和"日本动画"，不是"动漫"
-    var tagName = type === 'variety' ? '综艺' : (type === 'anime' ? '日本动画' : null);
-    if (tagName) {
-        var tries = 0;
-        var tryClickTag = function () {
-            tries++;
-            var tags = document.querySelectorAll('#douban-tags button');
-            var found = false;
-            for (var i = 0; i < tags.length; i++) {
-                if (tags[i].textContent.trim() === tagName) { tags[i].click(); found = true; break; }
+    try {
+        // 1. 切换 tab（更新全局状态 + 按钮样式）
+        var movieToggle = document.getElementById('douban-movie-toggle');
+        var tvToggle = document.getElementById('douban-tv-toggle');
+        if (typeof doubanMovieTvCurrentSwitch !== 'undefined') {
+            doubanMovieTvCurrentSwitch = targetTab;
+        }
+        if (movieToggle && tvToggle) {
+            if (targetTab === 'movie') {
+                movieToggle.classList.add('bg-pink-600', 'text-white');
+                movieToggle.classList.remove('text-gray-300');
+                tvToggle.classList.remove('bg-pink-600', 'text-white');
+                tvToggle.classList.add('text-gray-300');
+            } else {
+                tvToggle.classList.add('bg-pink-600', 'text-white');
+                tvToggle.classList.remove('text-gray-300');
+                movieToggle.classList.remove('bg-pink-600', 'text-white');
+                movieToggle.classList.add('text-gray-300');
             }
-            // 没找到且重试没超3次，400ms后再试（等tab切换渲染完）
-            if (!found && tries < 3) setTimeout(tryClickTag, 400);
-        };
-        setTimeout(tryClickTag, 300);
+        }
+        // 2. 设置标签并加载
+        if (typeof doubanCurrentTag !== 'undefined') doubanCurrentTag = targetTag;
+        if (typeof doubanPageStart !== 'undefined') doubanPageStart = 0;
+        if (typeof renderDoubanTags === 'function') renderDoubanTags();
+        if (typeof renderRecommend === 'function' && typeof doubanPageSize !== 'undefined') {
+            // 只有豆瓣启用时才加载
+            try {
+                if (localStorage.getItem('doubanEnabled') === 'true') {
+                    renderRecommend(targetTag, doubanPageSize, 0);
+                }
+            } catch (e) { renderRecommend(targetTag, doubanPageSize, 0); }
+        }
+        if (typeof setupDoubanRefreshBtn === 'function') setupDoubanRefreshBtn();
+    } catch (e) {
+        // 降级：模拟点击 toggle
+        var toggleBtn = document.getElementById(wantTv ? 'douban-tv-toggle' : 'douban-movie-toggle');
+        if (toggleBtn) toggleBtn.click();
     }
 
     // 滚到豆瓣区
