@@ -1,0 +1,80 @@
+/* 平板适配：iPad / Android 平板 (768px - 1366px) */
+
+/* 防止横向溢出（iPad 常见问题） */
+@media (min-width: 768px) and (max-width: 1366px) {
+    body {
+        overflow-x: hidden;
+    }
+    .container, main {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* iPad 竖屏 (768px-1023px)：优化卡片列数 */
+@media (min-width: 768px) and (max-width: 1023px) {
+    #douban-results {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+    #results {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* iPad 横屏 (1024px-1366px)：优化卡片列数 */
+@media (min-width: 1024px) and (max-width: 1366px) {
+    #douban-results {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+    #results {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
+
+/* 触控优化：增大可点击区域（平板手指操作） */
+@media (pointer: coarse) {
+    button, .topnav-btn, .episode-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    #douban-results > div,
+    #results > div {
+        cursor: pointer;
+    }
+    /* 卡片增加内边距，手指好点 */
+    .douban-card, .result-card {
+        padding: 0.5rem;
+    }
+}
+
+/* 导航栏平板优化：防止挤压 */
+@media (min-width: 768px) and (max-width: 1366px) {
+    .topnav-inner {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .topnav-btn {
+        padding: 0.6rem 0.8rem;
+    }
+}
+
+/* 播放器平板优化 */
+@media (min-width: 768px) and (max-width: 1366px) {
+    .player-container {
+        max-width: 95% !important;
+        margin: 0 auto;
+    }
+    /* 选集按钮更大，好点 */
+    .episode-btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* 横竖屏切换时平滑过渡 */
+@media (min-width: 768px) {
+    #douban-results, #results {
+        transition: grid-template-columns 0.2s ease;
+    }
+}
