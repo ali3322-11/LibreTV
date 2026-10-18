@@ -610,6 +610,8 @@ async function renderDoubanCards(data, container) {
 function resetToHome() {
     resetSearchArea();
     updateDoubanVisibility();
+    // Netflix 首页：回家时显示 hero+横滑行
+    if (typeof window.nfHomeShow === 'function') window.nfHomeShow(true);
 }
 
 // 加载豆瓣首页内容
