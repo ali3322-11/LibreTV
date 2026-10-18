@@ -248,13 +248,19 @@ export async function onRequest(context) {
 
     // 获取远程内容及其类型
     async function fetchContentWithType(targetUrl) {
+        const targetHost = new URL(targetUrl).hostname;
+        // 豆瓣图片 CDN 强制要求 Referer 为豆瓣主站，否则返回 418
+        let referer = request.headers.get('Referer') || new URL(targetUrl).origin;
+        if (/\.doubanio\.com$/i.test(targetHost)) {
+            referer = 'https://movie.douban.com/';
+        }
         const headers = new Headers({
             'User-Agent': getRandomUserAgent(),
             'Accept': '*/*',
             // 尝试传递一些原始请求的头信息
             'Accept-Language': request.headers.get('Accept-Language') || 'zh-CN,zh;q=0.9,en;q=0.8',
             // 尝试设置 Referer 为目标网站的域名，或者传递原始 Referer
-            'Referer': request.headers.get('Referer') || new URL(targetUrl).origin
+            'Referer': referer
         });
 
         try {
