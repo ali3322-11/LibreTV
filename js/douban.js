@@ -7,6 +7,10 @@ let defaultTvTags = ['热门', '美剧', '英剧', '韩剧', '日剧', '国产�
 // 用户标签列表 - 存储用户实际使用的标签（包含保留的系统标签和用户添加的自定义标签）
 let movieTags = [];
 let tvTags = [];
+// 动漫/综艺专属标签组（侧边栏点分类时覆盖显示）
+let doubanForcedTags = null;
+const animeTags = ['日本动画', '国产动画', '欧美动画'];
+const varietyTags = ['国产综艺', '日综', '韩综', '欧美综艺', '港台综艺'];
 
 // 加载用户标签
 
@@ -336,8 +340,8 @@ function renderDoubanTags(tags) {
     const tagContainer = document.getElementById('douban-tags');
     if (!tagContainer) return;
     
-    // 确定当前应该使用的标签列表
-    const currentTags = doubanMovieTvCurrentSwitch === 'movie' ? movieTags : tvTags;
+    // 确定当前应该使用的标签列表（专属标签组优先）
+    const currentTags = doubanForcedTags || (doubanMovieTvCurrentSwitch === 'movie' ? movieTags : tvTags);
     
     // 清空标签容器
     tagContainer.innerHTML = '';
