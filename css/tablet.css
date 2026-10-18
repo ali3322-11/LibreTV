@@ -78,3 +78,30 @@
         transition: grid-template-columns 0.2s ease;
     }
 }
+
+/* ========== iPad Safari 布局修复 ========== */
+/* 根因：iPad Safari 的 100vh 会把浏览器工具栏高度算进去，导致
+   flex 高度链断裂，#searchArea 塌掉，内容被挤到底部。
+   用 dvh（动态视口高度）+ 加固 flex 链来修。 */
+@media (min-width: 768px) and (max-width: 1366px) {
+    /* 主容器用动态视口高度 */
+    .container {
+        min-height: 100vh;   /* 旧浏览器回退 */
+        min-height: 100dvh;  /* iPad Safari 15.4+ */
+    }
+    /* 防止 flex 子项被内容撑开导致塌陷 */
+    .container > .flex-1 {
+        min-height: 0;
+        min-width: 0;
+    }
+    /* 搜索区给一个保底高度，保证垂直居中不塌 */
+    #searchArea {
+        min-height: 40vh;
+        min-height: 40dvh;
+    }
+    /* body 的 flex 布局在 iPad 上加固 */
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+}
