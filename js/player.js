@@ -397,6 +397,9 @@ function showShortcutHint(text, direction) {
 }
 
 // 初始化播放器
+// 电影天堂分享页链接专用：官方 m3u8 解析接口（iframe 嵌入播放）
+const DYTTZY_PARSE_API = 'https://vod.dyttjiexi.com/?url=';
+
 function initPlayer(videoUrl) {
     if (!videoUrl) {
         return
@@ -406,6 +409,18 @@ function initPlayer(videoUrl) {
     if (art) {
         art.destroy();
         art = null;
+    }
+
+    // 电影天堂的播放地址是分享页（非直链），用官方解析接口以 iframe 方式播放
+    if (/dytt[^/]*\.com\/share\//i.test(videoUrl)) {
+        const container = document.querySelector('#player');
+        const loadingEl = document.getElementById('player-loading');
+        if (loadingEl) loadingEl.style.display = 'none';
+        container.innerHTML =
+            '<iframe src="' + DYTTZY_PARSE_API + encodeURIComponent(videoUrl) + '" ' +
+            'style="width:100%;height:100%;min-height:400px;border:0;" ' +
+            'allowfullscreen allow="autoplay; fullscreen"></iframe>';
+        return;
     }
 
     // 配置HLS.js选项
