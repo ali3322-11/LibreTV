@@ -33,24 +33,33 @@ window.sidebarNav = function (type, el) {
         return;
     }
 
-    // 确保豆瓣区可见
+    // 确保豆瓣区可见，隐藏 Netflix 首页
     var doubanArea = document.getElementById('doubanArea');
     if (doubanArea) doubanArea.classList.remove('hidden');
+    if (typeof window.nfHomeShow === 'function' && type !== 'home') window.nfHomeShow(false);
 
     // 切换电影/电视剧 tab
-    var wantTv = (type === 'tv' || type === 'variety');
+    // 电影 → 电影tab；电视剧/综艺/动漫 → 电视剧tab（综艺、动漫标签都在电视剧tab下）
+    var wantTv = (type === 'tv' || type === 'variety' || type === 'anime');
     var toggleBtn = document.getElementById(wantTv ? 'douban-tv-toggle' : 'douban-movie-toggle');
     if (toggleBtn) toggleBtn.click();
 
-    // 综艺/动漫：尝试点对应标签
-    var tagName = type === 'variety' ? '综艺' : (type === 'anime' ? '动漫' : null);
+    // 综艺/动漫：点对应标签（带重试，等标签渲染完）
+    // 注意：豆瓣标签名是"综艺"和"日本动画"，不是"动漫"
+    var tagName = type === 'variety' ? '综艺' : (type === 'anime' ? '日本动画' : null);
     if (tagName) {
-        setTimeout(function () {
+        var tries = 0;
+        var tryClickTag = function () {
+            tries++;
             var tags = document.querySelectorAll('#douban-tags button');
+            var found = false;
             for (var i = 0; i < tags.length; i++) {
-                if (tags[i].textContent.trim() === tagName) { tags[i].click(); break; }
+                if (tags[i].textContent.trim() === tagName) { tags[i].click(); found = true; break; }
             }
-        }, 350);
+            // 没找到且重试没超3次，400ms后再试（等tab切换渲染完）
+            if (!found && tries < 3) setTimeout(tryClickTag, 400);
+        };
+        setTimeout(tryClickTag, 300);
     }
 
     // 滚到豆瓣区
