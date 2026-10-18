@@ -448,14 +448,29 @@ function renderRecommend(tag, pageLimit, pageStart) {
         })
         .catch(error => {
             console.error("获取豆瓣数据失败：", error);
+            // 优雅降级：收起错误块，只显示一个轻量重试按钮，不破坏首页观感
             container.innerHTML = `
-                <div class="col-span-full text-center py-8">
-                    <div class="text-red-400">❌ 获取豆瓣数据失败，请稍后重试</div>
-                    <div class="text-gray-500 text-sm mt-2">提示：使用VPN可能有助于解决此问题</div>
+                <div class="col-span-full text-center py-10">
+                    <div class="text-gray-400 text-sm mb-3">豆瓣暂时连不上（可能被限流），过几分钟再试</div>
+                    <button onclick="retryDoubanLoad()" class="px-5 py-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white text-sm transition-colors">
+                        🔄 重试
+                    </button>
                 </div>
             `;
         });
 }
+
+// 豆瓣加载失败后的手动重试：用当前分类/分页参数重新加载
+window.retryDoubanLoad = function () {
+    try {
+        const tag = (typeof doubanCurrentTag !== 'undefined') ? doubanCurrentTag : '热门';
+        const size = (typeof doubanPageSize !== 'undefined') ? doubanPageSize : 18;
+        const start = (typeof doubanPageStart !== 'undefined') ? doubanPageStart : 0;
+        renderRecommend(tag, size, start);
+    } catch (e) {
+        location.reload();
+    }
+};
 
 async function fetchDoubanData(url) {
     // 添加超时控制
