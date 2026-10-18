@@ -166,17 +166,17 @@
 @keyframes nf-shimmer { to { background-position: -200% 0; } }
 
 /* 浅色主题适配 */
-body.light .nf-hero-gradient {
+[data-theme="light"] .nf-hero-gradient {
     background:
         linear-gradient(to top, #f5f5f7 4%, rgba(245,245,247,.55) 34%, rgba(245,245,247,.12) 62%, rgba(245,245,247,.45) 100%),
         linear-gradient(to right, rgba(245,245,247,.85) 0%, rgba(245,245,247,.25) 45%, transparent 70%);
 }
-body.light .nf-hero-title { color: #111; text-shadow: none; }
-body.light .nf-hero-desc { color: #333; text-shadow: none; }
-body.light .nf-hero-meta { color: #555; }
-body.light .nf-row-title { color: #111; }
-body.light .nf-card .t { color: #333; }
-body.light .nf-card img { background: #e5e5ea; }
+[data-theme="light"] .nf-hero-title { color: #111; text-shadow: none; }
+[data-theme="light"] .nf-hero-desc { color: #333; text-shadow: none; }
+[data-theme="light"] .nf-hero-meta { color: #555; }
+[data-theme="light"] .nf-row-title { color: #111; }
+[data-theme="light"] .nf-card .t { color: #333; }
+[data-theme="light"] .nf-card img { background: #e5e5ea; }
 
 /* 移动端 */
 @media (max-width: 768px) {
@@ -188,3 +188,20 @@ body.light .nf-card img { background: #e5e5ea; }
     .nf-card img { width: 118px; height: 168px; }
     .nf-row-title { font-size: 16px; }
 }
+
+/* hero 轮播点 */
+.nf-hero-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.nf-dot {
+    width: 26px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,.35);
+    cursor: pointer;
+    transition: background .2s;
+}
+.nf-dot.active { background: #e50914; }
+.nf-dot:hover { background: rgba(255,255,255,.7); }
