@@ -393,3 +393,19 @@ input:checked + .slider:before {
 #username {
     display: none !important;
 }
+
+/* 浅色主题：上一集/下一集按钮 */
+[data-theme="light"] #prevButton,
+[data-theme="light"] #nextButton {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+}
+[data-theme="light"] #prevButton:hover,
+[data-theme="light"] #nextButton:hover {
+    background-color: #e5e7eb !important;
+}
+[data-theme="light"] #prevButton svg,
+[data-theme="light"] #nextButton svg {
+    stroke: #111827;
+}
