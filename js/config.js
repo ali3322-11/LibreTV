@@ -13,7 +13,7 @@ const PASSWORD_CONFIG = {
 
 // 网站信息配置
 const SITE_CONFIG = {
-    name: '泡泡影视',
+    name: 'CinePop',
     url: 'https://newpaopao.dpdns.org',
     description: '在线视频搜索',
     logo: 'image/logo.png',
