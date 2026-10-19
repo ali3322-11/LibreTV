@@ -409,3 +409,9 @@ input:checked + .slider:before {
 [data-theme="light"] #nextButton svg {
     stroke: #111827;
 }
+
+/* 浅色主题：播放页页脚背景 */
+[data-theme="light"] footer.footer {
+    background-color: #f8f9fb !important;
+    border-top-color: #e5e7eb !important;
+}
