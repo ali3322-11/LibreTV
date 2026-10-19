@@ -411,6 +411,12 @@ input:checked + .slider:before {
 }
 
 /* 浅色主题：播放页页脚背景 */
+/* 播放页页脚：深色默认 */
+footer.footer {
+    background-color: #0a0a0a;
+    border-top: 1px solid #333;
+}
+/* 播放页页脚：浅色主题 */
 [data-theme="light"] footer.footer {
     background: #f8f9fb !important;
     background-image: none !important;
