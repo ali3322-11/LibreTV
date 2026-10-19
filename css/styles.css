@@ -1046,3 +1046,17 @@ body {
         font-size: 0.8rem;
     }
 }
+
+/* ===== TV 遥控器导航焦点高亮 ===== */
+.tv-focused {
+    outline: 3px solid #e50914 !important;
+    outline-offset: 2px;
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(229, 9, 20, 0.6);
+    z-index: 5;
+    position: relative;
+}
+[data-theme="light"] .tv-focused {
+    outline-color: #e50914 !important;
+    box-shadow: 0 0 12px rgba(229, 9, 20, 0.45);
+}
