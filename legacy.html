@@ -12,7 +12,9 @@
   不用 fetch、Promise、async、箭头函数、模板字符串、?.、const/let。
   密码: 沿用主站机制。服务端 _middleware.js 会把下面 window.__ENV__.PASSWORD
   这一行里的 {{PASSWORD}} 替换成密码哈希,这一行必须原样保留,删了就验不过。
-  搜索/详情: 走主站同款 /proxy/ 转发 heimuer 采集源,带 auth 哈希 + 时间戳。
+  搜索/详情: 走主站同款 /proxy/ 转发采集源,带 auth 哈希 + 时间戳。
+  资源选择: 下拉框从站内 js/config.js 文本里解析资源名和地址(不执行该文件),
+  解析失败时只留默认源;选中的资源记在 localStorage 里,下次打开还用它。
   播放: 拿到 vod_play_url 第一源第一集的直链,直接交给 <video> 原生播放。
   未验证的风险(真机测试前不要承诺能用):
   1) iOS 6.1.3 的 TLS 太老,可能连 Cloudflare 的 HTTPS 握手都过不了,
@@ -28,6 +30,7 @@ body{font-family:Arial,sans-serif;background:#000;color:#fff;margin:0;padding:10
 h1{font-size:20px;margin:6px 0}
 input,button{font-size:18px;padding:8px}
 input{width:58%}
+select{font-size:18px;padding:8px;max-width:100%}
 button{background:#e50914;color:#fff;border:0;padding:8px 14px}
 a{color:#fff}
 .item{border-bottom:1px solid #333;padding:10px 0}
@@ -48,11 +51,12 @@ video{width:100%;background:#000}
 <p class="note" id="pwdMsg"></p>
 </div>
 <div id="mainBox" style="display:none">
+<p>资源: <select id="srcSel"><option value="">加载中...</option></select></p>
 <form id="searchForm" action="#">
 <input type="text" id="q" placeholder="输入片名">
 <button type="submit">搜索</button>
 </form>
-<p class="note">只搜一个源(黑木耳)。没有推荐和海报,搜到点片名,再点集数播放。</p>
+<p class="note">先选资源,再搜索。搜到点片名,再点集数播放。</p>
 <div id="msg"></div>
 <div id="results"></div>
 <h2 id="playTitle" style="display:none"></h2>
@@ -65,7 +69,81 @@ window.__ENV__ = window.__ENV__ || {};
 window.__ENV__.PASSWORD = "{{PASSWORD}}";
 </script>
 <script>
-var API_URL = 'https://json.heimuer.xyz/api.php/provide/vod';
+var SOURCES = [{key: 'heimuer', name: '黑木耳', api: 'https://json.heimuer.xyz/api.php/provide/vod'}];
+var API_URL = SOURCES[0].api;
+var srcSel = document.getElementById('srcSel');
+function rebuildSourceList() {
+  var i, html = '';
+  for (i = 0; i < SOURCES.length; i++) {
+    html += '<option value="' + esc(SOURCES[i].api) + '"' + (SOURCES[i].api === API_URL ? ' selected' : '') + '>' + esc(SOURCES[i].name) + '</option>';
+  }
+  srcSel.innerHTML = html;
+}
+function saveSource(api) {
+  try { localStorage.setItem('legacySource', api); } catch (e) {}
+}
+function loadSavedSource() {
+  try { return localStorage.getItem('legacySource') || ''; } catch (e) { return ''; }
+}
+srcSel.onchange = function () {
+  if (srcSel.value) {
+    API_URL = srcSel.value;
+    saveSource(API_URL);
+    resultsBox.innerHTML = '';
+    episodesBox.innerHTML = '';
+    msgBox.innerHTML = '';
+  }
+};
+function parseConfigSites(text) {
+  var list = [];
+  var lines = text.split('\n');
+  var i, line, trimmed, m, key = '', api = '', name = '';
+  var inSites = false;
+  for (i = 0; i < lines.length; i++) {
+    line = lines[i];
+    trimmed = line.replace(/^\s+|\s+$/g, '');
+    if (!inSites) {
+      if (line.indexOf('API_SITES') !== -1) { inSites = true; }
+      continue;
+    }
+    if (trimmed === '};') { break; }
+    m = line.match(/^\s{4}(\w+):\s*\{$/);
+    if (m) { key = m[1]; api = ''; name = ''; continue; }
+    if (key) {
+      m = line.match(/api:\s*'([^']+)'/);
+      if (m) { api = m[1]; }
+      m = line.match(/name:\s*'([^']+)'/);
+      if (m) { name = m[1]; }
+      if (trimmed === '},' || trimmed === '}') {
+        if (key !== 'testSource' && api && name) { list.push({key: key, name: name, api: api}); }
+        key = '';
+      }
+    }
+  }
+  return list;
+}
+function loadSources() {
+  var xhr;
+  if (!window.XMLHttpRequest) { return; }
+  xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var parsed = parseConfigSites(xhr.responseText);
+      var i, saved = loadSavedSource(), found = false;
+      if (parsed.length > 1) {
+        SOURCES = parsed;
+        for (i = 0; i < SOURCES.length; i++) { if (SOURCES[i].api === saved) { found = true; } }
+        if (found) { API_URL = saved; }
+        else if (!saved) {
+          for (i = 0; i < SOURCES.length; i++) { if (SOURCES[i].key === 'heimuer') { API_URL = SOURCES[i].api; } }
+        }
+        rebuildSourceList();
+      }
+    }
+  };
+  xhr.open('GET', 'js/config.js', true);
+  xhr.send(null);
+}
 var pwdBox = document.getElementById('pwdBox');
 var mainBox = document.getElementById('mainBox');
 var pwdMsg = document.getElementById('pwdMsg');
@@ -142,6 +220,8 @@ function getJSON(url, ok, fail) {
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+rebuildSourceList();
+loadSources();
 
 document.getElementById('searchForm').onsubmit = function () {
   var q = document.getElementById('q').value;
