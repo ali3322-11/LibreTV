@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CinePop 老版 - 搜索播放</title>
+<!--
+  DRAFT - 未部署，未推送。草稿位置: ~/workspace/legacy-draft/legacy.html
+  目的: 给 iPhone 4 (iOS 6.1.3) / iPad iOS 11.3 这类老设备用的极简页,
+  只做搜索 + 选集 + 播放,无首页推荐、无海报、无主题切换。
+  写法限制(对应老 WebKit): 只用 var / function / XMLHttpRequest,
+  不用 fetch、Promise、async、箭头函数、模板字符串、?.、const/let。
+  密码: 沿用主站机制。服务端 _middleware.js 会把下面 window.__ENV__.PASSWORD
+  这一行里的 {{PASSWORD}} 替换成密码哈希,这一行必须原样保留,删了就验不过。
+  搜索/详情: 走主站同款 /proxy/ 转发 heimuer 采集源,带 auth 哈希 + 时间戳。
+  播放: 拿到 vod_play_url 第一源第一集的直链,直接交给 <video> 原生播放。
+  未验证的风险(真机测试前不要承诺能用):
+  1) iOS 6.1.3 的 TLS 太老,可能连 Cloudflare 的 HTTPS 握手都过不了,
+     页面根本下载不下来,这是 JS 改不了的。
+  2) 有些源返回的不是可直接播的 m3u8/mp4,老机播不了,只能逐个试。
+  部署方法(需 quan 定夺后由他/主 agent 执行,本草稿不自动部署):
+  把本文件复制为 libretv-work/legacy.html,连同 libs/sha256.min.js 已在仓内,
+  提交并推送到 ali3322-11/LibreTV 的 main,Cloudflare Pages 部署后访问
+  https://newpaopao.dpdns.org/legacy.html
+-->
+<style>
+body{font-family:Arial,sans-serif;background:#000;color:#fff;margin:0;padding:10px;font-size:18px}
+h1{font-size:20px;margin:6px 0}
+input,button{font-size:18px;padding:8px}
+input{width:58%}
+button{background:#e50914;color:#fff;border:0;padding:8px 14px}
+a{color:#fff}
+.item{border-bottom:1px solid #333;padding:10px 0}
+.ep{margin:4px 6px 4px 0}
+video{width:100%;background:#000}
+.note{color:#aaa;font-size:14px}
+.err{color:#ff6666}
+</style>
+</head>
+<body>
+<h1>CinePop 老版</h1>
+<div id="pwdBox">
+<p>请输入密码:</p>
+<form id="pwdForm" action="#">
+<input type="password" id="pwdInput" autocomplete="off">
+<button type="submit">确定</button>
+</form>
+<p class="note" id="pwdMsg"></p>
+</div>
+<div id="mainBox" style="display:none">
+<form id="searchForm" action="#">
+<input type="text" id="q" placeholder="输入片名">
+<button type="submit">搜索</button>
+</form>
+<p class="note">只搜一个源(黑木耳)。没有推荐和海报,搜到点片名,再点集数播放。</p>
+<div id="msg"></div>
+<div id="results"></div>
+<h2 id="playTitle" style="display:none"></h2>
+<div id="episodes"></div>
+<video id="player" controls style="display:none"></video>
+</div>
+<script src="libs/sha256.min.js"></script>
+<script>
+window.__ENV__ = window.__ENV__ || {};
+window.__ENV__.PASSWORD = "{{PASSWORD}}";
+</script>
+<script>
+var API_URL = 'https://json.heimuer.xyz/api.php/provide/vod';
+var pwdBox = document.getElementById('pwdBox');
+var mainBox = document.getElementById('mainBox');
+var pwdMsg = document.getElementById('pwdMsg');
+var msgBox = document.getElementById('msg');
+var resultsBox = document.getElementById('results');
+var episodesBox = document.getElementById('episodes');
+var player = document.getElementById('player');
+var playTitle = document.getElementById('playTitle');
+
+function isProtected() {
+  var h = window.__ENV__ && window.__ENV__.PASSWORD;
+  return typeof h === 'string' && h.length === 64 && !/^0+$/.test(h);
+}
+function storedVerified() {
+  try {
+    var raw = localStorage.getItem('passwordVerified');
+    if (!raw) { return false; }
+    var o = JSON.parse(raw);
+    var h = window.__ENV__ && window.__ENV__.PASSWORD;
+    return o && o.verified && o.passwordHash === h &&
+      (new Date().getTime() - o.timestamp) < 90 * 24 * 60 * 60 * 1000;
+  } catch (e) { return false; }
+}
+function showMain() {
+  pwdBox.style.display = 'none';
+  mainBox.style.display = 'block';
+}
+if (!isProtected() || storedVerified()) { showMain(); }
+
+document.getElementById('pwdForm').onsubmit = function () {
+  var input = document.getElementById('pwdInput').value;
+  var hash = '';
+  try { hash = sha256(input); } catch (e) { hash = ''; }
+  var correct = window.__ENV__ && window.__ENV__.PASSWORD;
+  if (hash && hash === correct) {
+    try {
+      localStorage.setItem('passwordVerified', JSON.stringify({
+        verified: true, timestamp: new Date().getTime(), passwordHash: correct
+      }));
+    } catch (e) {}
+    showMain();
+  } else {
+    pwdMsg.innerHTML = '密码错误,请重试';
+  }
+  return false;
+};
+
+function proxyUrl(apiUrl) {
+  var url = '/proxy/' + encodeURIComponent(apiUrl);
+  var h = window.__ENV__ && window.__ENV__.PASSWORD;
+  if (isProtected() && h) {
+    url = url + '?auth=' + encodeURIComponent(h) + '&t=' + new Date().getTime();
+  }
+  return url;
+}
+function getJSON(url, ok, fail) {
+  var xhr;
+  if (window.XMLHttpRequest) { xhr = new XMLHttpRequest(); }
+  else { xhr = new ActiveXObject('Microsoft.XMLHTTP'); }
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = null;
+        try { data = JSON.parse(xhr.responseText); } catch (e) { data = null; }
+        if (data) { ok(data); } else { fail('返回内容不是 JSON'); }
+      } else {
+        fail('请求失败,状态码 ' + xhr.status);
+      }
+    }
+  };
+  xhr.open('GET', url, true);
+  xhr.send(null);
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+document.getElementById('searchForm').onsubmit = function () {
+  var q = document.getElementById('q').value;
+  if (!q) { return false; }
+  msgBox.innerHTML = '搜索中...';
+  resultsBox.innerHTML = '';
+  episodesBox.innerHTML = '';
+  player.style.display = 'none';
+  playTitle.style.display = 'none';
+  var url = API_URL + '?ac=videolist&wd=' + encodeURIComponent(q);
+  getJSON(proxyUrl(url), function (data) {
+    var list = data.list || [];
+    if (!list.length) { msgBox.innerHTML = '没有搜到结果,换个片名试试'; return; }
+    msgBox.innerHTML = '搜到 ' + list.length + ' 条,点片名看集数';
+    var html = '';
+    var i, item;
+    for (i = 0; i < list.length; i++) {
+      item = list[i];
+      html += '<div class="item"><a href="#" data-id="' + esc(item.vod_id) + '" data-name="' + esc(item.vod_name) + '">' +
+        esc(item.vod_name) + ' (' + esc(item.vod_year) + ') ' + esc(item.type_name) + '</a></div>';
+    }
+    resultsBox.innerHTML = html;
+    var links = resultsBox.getElementsByTagName('a');
+    for (i = 0; i < links.length; i++) {
+      links[i].onclick = function () {
+        loadDetail(this.getAttribute('data-id'), this.getAttribute('data-name'));
+        return false;
+      };
+    }
+  }, function (err) { msgBox.innerHTML = '<span class="err">' + esc(err) + '</span>'; });
+  return false;
+};
+
+function loadDetail(id, name) {
+  msgBox.innerHTML = '正在取播放地址...';
+  episodesBox.innerHTML = '';
+  var url = API_URL + '?ac=videolist&ids=' + encodeURIComponent(id);
+  getJSON(proxyUrl(url), function (data) {
+    var list = data.list || [];
+    if (!list.length) { msgBox.innerHTML = '取不到详情'; return; }
+    var detail = list[0];
+    var eps = parseEpisodes(detail.vod_play_url);
+    if (!eps.length) { msgBox.innerHTML = '这个片没有可播的地址,换一个源/片名试试'; return; }
+    msgBox.innerHTML = '';
+    playTitle.style.display = 'block';
+    playTitle.innerHTML = esc(name || detail.vod_name);
+    var html = '';
+    var i;
+    for (i = 0; i < eps.length; i++) {
+      html += '<button class="ep" data-url="' + esc(eps[i].url) + '">' + esc(eps[i].name) + '</button>';
+    }
+    episodesBox.innerHTML = html;
+    var btns = episodesBox.getElementsByTagName('button');
+    for (i = 0; i < btns.length; i++) {
+      btns[i].onclick = function () {
+        player.style.display = 'block';
+        player.src = this.getAttribute('data-url');
+        player.load();
+        player.play();
+      };
+    }
+  }, function (err) { msgBox.innerHTML = '<span class="err">' + esc(err) + '</span>'; });
+}
+function parseEpisodes(playUrl) {
+  var eps = [];
+  if (!playUrl) { return eps; }
+  var sources = playUrl.split('$$$');
+  if (!sources.length) { return eps; }
+  var parts = sources[0].split('#');
+  var i, p;
+  for (i = 0; i < parts.length; i++) {
+    p = parts[i].split('$');
+    var u = p.length > 1 ? p[1] : '';
+    if (u && (u.indexOf('http://') === 0 || u.indexOf('https://') === 0)) {
+      eps.push({ name: p[0] || ('第' + (i + 1) + '集'), url: u });
+    }
+  }
+  return eps;
+}
+</script>
+</body>
+</html>
