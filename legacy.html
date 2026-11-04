@@ -15,7 +15,8 @@
   搜索/详情: 走主站同款 /proxy/ 转发采集源,带 auth 哈希 + 时间戳。
   资源选择: 下拉框从站内 js/config.js 文本里解析资源名和地址(不执行该文件),
   解析失败时只留默认源;选中的资源记在 localStorage 里,下次打开还用它。
-  播放: 拿到 vod_play_url 第一源第一集的直链,直接交给 <video> 原生播放。
+  播放: 优先取带 .m3u8/.mp4 的直链,交给 <video> 原生播放;播不了自动试
+  同一集的其他线路($$$ 后面的源),都失败才提示换资源/换片。
   未验证的风险(真机测试前不要承诺能用):
   1) iOS 6.1.3 的 TLS 太老,可能连 Cloudflare 的 HTTPS 握手都过不了,
      页面根本下载不下来,这是 JS 改不了的。
@@ -62,6 +63,7 @@ video{width:100%;background:#000}
 <h2 id="playTitle" style="display:none"></h2>
 <div id="episodes"></div>
 <video id="player" controls style="display:none"></video>
+<p class="note" id="directWrap" style="display:none">放不了时点: <a id="directLink" href="#" target="_blank">直接打开播放地址</a></p>
 </div>
 <script src="libs/sha256.min.js"></script>
 <script>
@@ -92,6 +94,7 @@ srcSel.onchange = function () {
     resultsBox.innerHTML = '';
     episodesBox.innerHTML = '';
     msgBox.innerHTML = '';
+    TRYING = false;
   }
 };
 function parseConfigSites(text) {
@@ -152,6 +155,89 @@ var resultsBox = document.getElementById('results');
 var episodesBox = document.getElementById('episodes');
 var player = document.getElementById('player');
 var playTitle = document.getElementById('playTitle');
+var directWrap = document.getElementById('directWrap');
+var directLink = document.getElementById('directLink');
+var ALL_SOURCES_EPS = [];
+var CUR_EP = 0;
+var CUR_TRY = 0;
+var TRYING = false;
+function isDirectMedia(u) {
+  return u.indexOf('.m3u8') !== -1 || u.indexOf('.mp4') !== -1 || u.indexOf('.mov') !== -1;
+}
+function isBadPage(u) {
+  return u.indexOf('/share/') !== -1 || u.indexOf('player.html') !== -1 || u.indexOf('.html') !== -1;
+}
+function parseSourceEpisodes(src) {
+  var eps = [];
+  if (!src) { return eps; }
+  var parts = src.split('#');
+  var i, p, u;
+  for (i = 0; i < parts.length; i++) {
+    p = parts[i].split('$');
+    u = p.length > 1 ? p[1] : '';
+    if (u && (u.indexOf('http://') === 0 || u.indexOf('https://') === 0)) {
+      eps.push({name: p[0] || ('第' + (i + 1) + '集'), url: u});
+    }
+  }
+  return eps;
+}
+function parseAllSources(playUrl) {
+  var out = [], i, eps;
+  if (!playUrl) { return out; }
+  var sources = playUrl.split('$$$');
+  for (i = 0; i < sources.length; i++) {
+    eps = parseSourceEpisodes(sources[i]);
+    if (eps.length) { out.push(eps); }
+  }
+  return out;
+}
+function choosePrimary(all) {
+  var best = 0, bestScore = -999, i, j, score;
+  for (i = 0; i < all.length; i++) {
+    score = 0;
+    for (j = 0; j < all[i].length; j++) {
+      if (isDirectMedia(all[i][j].url)) { score += 2; }
+      if (isBadPage(all[i][j].url)) { score -= 3; }
+    }
+    if (score > bestScore) { bestScore = score; best = i; }
+  }
+  return best;
+}
+function tryNextSource() {
+  var url = '', s;
+  for (s = CUR_TRY; s < ALL_SOURCES_EPS.length; s++) {
+    if (ALL_SOURCES_EPS[s][CUR_EP] && ALL_SOURCES_EPS[s][CUR_EP].url) {
+      url = ALL_SOURCES_EPS[s][CUR_EP].url;
+      CUR_TRY = s;
+      break;
+    }
+  }
+  if (!url) {
+    TRYING = false;
+    msgBox.innerHTML = '<span class="err">都试过了,这个片在 iPhone 4 上格式不支持,换个资源或换个片试试</span>';
+    return;
+  }
+  if (CUR_TRY > 0) { msgBox.innerHTML = '这个格式放不了,正在试第 ' + (CUR_TRY + 1) + ' 个线路...'; }
+  player.style.display = 'block';
+  directWrap.style.display = 'block';
+  directLink.href = url;
+  player.src = url;
+  player.load();
+  try { player.play(); } catch (e) {}
+}
+function playEpisode(idx) {
+  CUR_EP = idx;
+  CUR_TRY = 0;
+  TRYING = true;
+  tryNextSource();
+}
+if (player.addEventListener) {
+  player.addEventListener('error', function () {
+    if (!TRYING) { return; }
+    CUR_TRY++;
+    tryNextSource();
+  });
+}
 
 function isProtected() {
   var h = window.__ENV__ && window.__ENV__.PASSWORD;
@@ -230,6 +316,7 @@ document.getElementById('searchForm').onsubmit = function () {
   resultsBox.innerHTML = '';
   episodesBox.innerHTML = '';
   player.style.display = 'none';
+  directWrap.style.display = 'none';
   playTitle.style.display = 'none';
   var url = API_URL + '?ac=videolist&wd=' + encodeURIComponent(q);
   getJSON(proxyUrl(url), function (data) {
@@ -263,7 +350,11 @@ function loadDetail(id, name) {
     var list = data.list || [];
     if (!list.length) { msgBox.innerHTML = '取不到详情'; return; }
     var detail = list[0];
-    var eps = parseEpisodes(detail.vod_play_url);
+    ALL_SOURCES_EPS = parseAllSources(detail.vod_play_url);
+    if (!ALL_SOURCES_EPS.length) { msgBox.innerHTML = '这个片没有可播的地址,换一个源/片名试试'; return; }
+    var primary = choosePrimary(ALL_SOURCES_EPS);
+    var eps = ALL_SOURCES_EPS[primary];
+    ALL_SOURCES_EPS.unshift(ALL_SOURCES_EPS.splice(primary, 1)[0]);
     if (!eps.length) { msgBox.innerHTML = '这个片没有可播的地址,换一个源/片名试试'; return; }
     msgBox.innerHTML = '';
     playTitle.style.display = 'block';
@@ -271,35 +362,21 @@ function loadDetail(id, name) {
     var html = '';
     var i;
     for (i = 0; i < eps.length; i++) {
-      html += '<button class="ep" data-url="' + esc(eps[i].url) + '">' + esc(eps[i].name) + '</button>';
+      html += '<button class="ep" data-idx="' + i + '">' + esc(eps[i].name) + '</button>';
     }
     episodesBox.innerHTML = html;
     var btns = episodesBox.getElementsByTagName('button');
     for (i = 0; i < btns.length; i++) {
       btns[i].onclick = function () {
-        player.style.display = 'block';
-        player.src = this.getAttribute('data-url');
-        player.load();
-        player.play();
+        playEpisode(parseInt(this.getAttribute('data-idx'), 10));
       };
     }
   }, function (err) { msgBox.innerHTML = '<span class="err">' + esc(err) + '</span>'; });
 }
 function parseEpisodes(playUrl) {
-  var eps = [];
-  if (!playUrl) { return eps; }
-  var sources = playUrl.split('$$$');
-  if (!sources.length) { return eps; }
-  var parts = sources[0].split('#');
-  var i, p;
-  for (i = 0; i < parts.length; i++) {
-    p = parts[i].split('$');
-    var u = p.length > 1 ? p[1] : '';
-    if (u && (u.indexOf('http://') === 0 || u.indexOf('https://') === 0)) {
-      eps.push({ name: p[0] || ('第' + (i + 1) + '集'), url: u });
-    }
-  }
-  return eps;
+  var all = parseAllSources(playUrl);
+  if (!all.length) { return []; }
+  return all[choosePrimary(all)];
 }
 </script>
 </body>
