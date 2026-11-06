@@ -411,6 +411,10 @@ function initPlayer(videoUrl) {
         art = null;
     }
 
+    // 清掉上一集 dyttzy 缩放模式留下的容器高度
+    var playerContainer = document.querySelector('#player');
+    if (playerContainer) playerContainer.style.height = '';
+
     // 电影天堂的播放地址是分享页（非直链，dytt*.com 或 play.phimgood.com），用官方解析接口以 iframe 方式播放
     if (/(dytt[^/]*\.com|phimgood\.com)\/share\//i.test(videoUrl)) {
         // 分享页在用户浏览器直接 iframe 打开（用户已过一次验证码，Cookie 有效）
@@ -419,10 +423,12 @@ function initPlayer(videoUrl) {
         const loadingEl = document.getElementById('player-loading');
         if (loadingEl) loadingEl.style.display = 'none';
         container.innerHTML =
+            '<div id="dyttzy-scale-wrap" style="width:100%;overflow:hidden;position:relative;">' +
             '<iframe src="' + videoUrl + '" ' +
             'id="dyttzy-iframe" ' +
             'style="width:100%;height:100%;min-height:400px;border:0;" ' +
             'allowfullscreen allow="autoplay; fullscreen"></iframe>' +
+            '</div>' +
             // 验证码过期提示条：15秒后显示，用户可手动关闭
             '<div id="dyttzy-captcha-hint" style="display:none;margin-top:8px;padding:10px 14px;' +
             'background:#fff7ed;border:1px solid #fdba74;border-radius:8px;font-size:13px;color:#9a3412;">' +
@@ -431,6 +437,38 @@ function initPlayer(videoUrl) {
             '，然后 <a href="javascript:location.reload()" style="color:#0284c7;text-decoration:underline;">刷新本页</a> 重试' +
             '<span onclick="this.parentElement.style.display=\'none\'" style="float:right;cursor:pointer;">✕</span>' +
             '</div>';
+        // 竖屏时分享页按桌面宽度排版，在窄 iframe 里只露出左半边：
+        // 用 800px 宽的 iframe 再整体缩放到容器宽度，播放器完整显示。
+        // 横屏/桌面宽度够时保持原样。
+        var fitDyttzy = function () {
+            var wrap = document.getElementById('dyttzy-scale-wrap');
+            var fr = document.getElementById('dyttzy-iframe');
+            if (!wrap || !fr) return;
+            var w = container.clientWidth || wrap.clientWidth;
+            if (w >= 800) {
+                fr.style.width = '100%';
+                fr.style.height = '100%';
+                fr.style.minHeight = '400px';
+                fr.style.transform = '';
+                wrap.style.height = '100%';
+                container.style.height = '';
+            } else {
+                var s = w / 800;
+                fr.style.width = '800px';
+                fr.style.height = '600px';
+                fr.style.minHeight = '0';
+                fr.style.transform = 'scale(' + s + ')';
+                fr.style.transformOrigin = '0 0';
+                wrap.style.height = (600 * s) + 'px';
+                container.style.height = (600 * s) + 'px';
+            }
+        };
+        fitDyttzy();
+        window.removeEventListener('resize', window.__dyttzyFit);
+        window.removeEventListener('orientationchange', window.__dyttzyFit);
+        window.__dyttzyFit = fitDyttzy;
+        window.addEventListener('resize', fitDyttzy);
+        window.addEventListener('orientationchange', fitDyttzy);
         // 15秒后显示提示（如果视频正常播放，用户手动关闭即可）
         setTimeout(function () {
             var hint = document.getElementById('dyttzy-captcha-hint');
