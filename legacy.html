@@ -71,7 +71,7 @@ window.__ENV__ = window.__ENV__ || {};
 window.__ENV__.PASSWORD = "{{PASSWORD}}";
 </script>
 <script>
-var SOURCES = [{key: 'heimuer', name: '黑木耳', api: 'https://json.heimuer.xyz/api.php/provide/vod'}];
+var SOURCES = [{key: 'baidu', name: '百度云资源', api: 'https://api.apibdzy.com/api.php/provide/vod'}];
 var API_URL = SOURCES[0].api;
 var srcSel = document.getElementById('srcSel');
 function rebuildSourceList() {
@@ -138,7 +138,7 @@ function loadSources() {
         for (i = 0; i < SOURCES.length; i++) { if (SOURCES[i].api === saved) { found = true; } }
         if (found) { API_URL = saved; }
         else if (!saved) {
-          for (i = 0; i < SOURCES.length; i++) { if (SOURCES[i].key === 'heimuer') { API_URL = SOURCES[i].api; } }
+          for (i = 0; i < SOURCES.length; i++) { if (SOURCES[i].key === 'baidu') { API_URL = SOURCES[i].api; } }
         }
         rebuildSourceList();
       }
