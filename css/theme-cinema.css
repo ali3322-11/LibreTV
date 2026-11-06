@@ -272,11 +272,11 @@
     background: #e50914 !important;
 }
 
-/* ---------- 选集按钮（播放页） ---------- */
+/* ---------- 选集按钮（播放页）：选中为蓝色，不用红白配色 ---------- */
 [data-theme="cinema"] .episode-btn.active,
 [data-theme="cinema"] .episode-btn.current {
-    background: #e50914 !important;
-    border-color: #e50914 !important;
+    background: #3b82f6 !important;
+    border-color: #60a5fa !important;
     color: #fff !important;
 }
 
