@@ -441,6 +441,8 @@ function initPlayer(videoUrl) {
         // 用 800px 宽的 iframe 再整体缩放到容器宽度，播放器完整显示。
         // 横屏/桌面宽度够时保持原样。
         // iframe 高 800px：分享页播放器上方有页头，视频底边（含字幕）会落在 600px 之下，600 高会切掉字幕。
+        // 注意：iOS Safari 对 iframe 的 transform: scale() 缩放不生效（看着和没改一样），
+        // 所以用 WebKit 的 zoom 来缩放（zoom 会真正改变 iframe 内容的布局尺寸），不支持 zoom 的浏览器才回退到 transform。
         var fitDyttzy = function () {
             var wrap = document.getElementById('dyttzy-scale-wrap');
             var fr = document.getElementById('dyttzy-iframe');
@@ -450,6 +452,7 @@ function initPlayer(videoUrl) {
                 fr.style.width = '100%';
                 fr.style.height = '100%';
                 fr.style.minHeight = '400px';
+                fr.style.zoom = '';
                 fr.style.transform = '';
                 wrap.style.height = '100%';
                 container.style.height = '';
@@ -458,8 +461,13 @@ function initPlayer(videoUrl) {
                 fr.style.width = '800px';
                 fr.style.height = '800px';
                 fr.style.minHeight = '0';
-                fr.style.transform = 'scale(' + s + ')';
-                fr.style.transformOrigin = '0 0';
+                if ('zoom' in fr.style) {
+                    fr.style.zoom = s;
+                    fr.style.transform = '';
+                } else {
+                    fr.style.transform = 'scale(' + s + ')';
+                    fr.style.transformOrigin = '0 0';
+                }
                 wrap.style.height = (800 * s) + 'px';
                 container.style.height = (800 * s) + 'px';
             }
