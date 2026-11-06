@@ -149,14 +149,25 @@ async function handleApiRequest(url) {
                 let episodes = [];
                 
                 if (videoDetail.vod_play_url) {
-                    // 分割不同播放源
+                    // 分割不同播放源（有的源会给两组地址，如电影天堂：dytt 分享页 + dyttm3u8 直链）
                     const playSources = videoDetail.vod_play_url.split('$$$');
-                    
-                    // 提取第一个播放源的集数（通常为主要源）
-                    if (playSources.length > 0) {
-                        const mainSource = playSources[0];
+
+                    // 优先选直链组（.m3u8/.mp4 等能直接播放的地址），避免嵌分享页导致竖屏只显示一半；
+                    // 没有直链组时回退到第一组，保持原有行为
+                    const isDirectVideo = (u) => /\.(m3u8|mp4|m4v|mov)(\?|#|$)/i.test(u);
+                    let mainSource = playSources[0] || '';
+                    for (const src of playSources) {
+                        const urls = src.split('#').map(ep => {
+                            const parts = ep.split('$');
+                            return parts.length > 1 ? parts[1] : '';
+                        }).filter(u => u && (u.startsWith('http://') || u.startsWith('https://')));
+                        if (urls.length > 0 && urls.some(isDirectVideo)) { mainSource = src; break; }
+                    }
+
+                    // 提取所选播放源的集数
+                    if (mainSource) {
                         const episodeList = mainSource.split('#');
-                        
+
                         // 从每个集数中提取URL
                         episodes = episodeList.map(ep => {
                             const parts = ep.split('$');
