@@ -164,6 +164,10 @@
     border-bottom: 1px solid #e2e8f0 !important;
     backdrop-filter: blur(12px);
 }
+/* 播放页“上一页”白色箭头在浅色下改为深色，否则看不见 */
+[data-theme="light"] #goBack svg {
+    fill: #0f172a !important;
+}
 [data-theme="light"] .player-container {
     background-color: #ffffff !important;
 }

@@ -285,3 +285,27 @@ body.sidebar-collapsed .yt-main {
         display: none;
     }
 }
+
+/* ---------- 手机（≤640px）：顶栏收紧，搜索框不再被挤扁 ---------- */
+@media (max-width: 640px) {
+    .yt-topbar {
+        padding: 0 10px;
+        gap: 8px;
+    }
+    .yt-topbar-left {
+        gap: 8px;
+    }
+    /* 历史按钮在手机顶栏隐藏，侧边栏里仍有入口 */
+    .yt-topbar-history {
+        display: none;
+    }
+    .yt-search-btn {
+        width: 44px;
+    }
+    .yt-search-row input {
+        padding: 0 12px;
+    }
+    .yt-search-row {
+        height: 38px;
+    }
+}

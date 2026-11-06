@@ -5,7 +5,8 @@ body, html {
     height: 100%;
     background-color: #0f1622;
     color: white;
-    padding-top: 37px;
+    /* 固定顶栏实际高约 68px（p-4 + 36px 内容），留够才不会遮住播放器顶部 */
+    padding-top: 68px;
 }
 
 /* Critical header and navigation styles */
@@ -33,6 +34,31 @@ body, html {
     background: none !important;
     border: none !important;
     padding: 0 !important;
+}
+
+/* 播放页主题切换按钮（与首页同款太阳/月亮图标，player.html 未引入 yt-layout.css，故在此定义） */
+.player-theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: #e5e5e5;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.player-theme-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+[data-theme="light"] .player-theme-btn {
+    color: #475569;
+}
+[data-theme="light"] .player-theme-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
 }
 
 /* Critical loading styles to prevent FOUC */
@@ -386,6 +412,21 @@ input:checked + .slider:before {
     /* 控制栏在小屏幕上可能需要换行 */
     .player-container .flex-wrap {
         margin-bottom: 4px;
+    }
+
+    /* 资源信息条：小屏允许换行，源名过长截断，不把“切换资源”挤出屏幕 */
+    #resourceInfoBarContainer {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .resource-info-bar-left {
+        min-width: 0;
+        flex: 1;
+    }
+    .resource-info-bar-left span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
