@@ -440,6 +440,7 @@ function initPlayer(videoUrl) {
         // 竖屏时分享页按桌面宽度排版，在窄 iframe 里只露出左半边：
         // 用 800px 宽的 iframe 再整体缩放到容器宽度，播放器完整显示。
         // 横屏/桌面宽度够时保持原样。
+        // iframe 高 800px：分享页播放器上方有页头，视频底边（含字幕）会落在 600px 之下，600 高会切掉字幕。
         var fitDyttzy = function () {
             var wrap = document.getElementById('dyttzy-scale-wrap');
             var fr = document.getElementById('dyttzy-iframe');
@@ -455,12 +456,12 @@ function initPlayer(videoUrl) {
             } else {
                 var s = w / 800;
                 fr.style.width = '800px';
-                fr.style.height = '600px';
+                fr.style.height = '800px';
                 fr.style.minHeight = '0';
                 fr.style.transform = 'scale(' + s + ')';
                 fr.style.transformOrigin = '0 0';
-                wrap.style.height = (600 * s) + 'px';
-                container.style.height = (600 * s) + 'px';
+                wrap.style.height = (800 * s) + 'px';
+                container.style.height = (800 * s) + 'px';
             }
         };
         fitDyttzy();
