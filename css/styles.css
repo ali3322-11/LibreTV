@@ -225,6 +225,25 @@ body {
     min-height: 100vh;
 }
 
+/* 横向溢出总闸：任何子元素（搜索结果卡片等）都不得把页面撑得比屏幕宽。
+   否则 iOS 会扩大布局视口，固定顶栏的右侧按钮（黑夜/白天切换）会被推出屏幕外。
+   站内横滑（影片行、分类条）各有自己的 overflow-x:auto，不受影响。 */
+html, body {
+    overflow-x: hidden;
+}
+
+/* 搜索结果网格与卡片：允许收缩到容器宽度，不让某张卡的长标题/长备注把整页撑宽 */
+#results {
+    min-width: 0;
+}
+#results > * {
+    min-width: 0;
+}
+.card-hover .p-2,
+.card-hover .flex-grow {
+    min-width: 0;
+}
+
 .container {
     flex: 1;
 }

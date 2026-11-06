@@ -249,6 +249,7 @@ body.sidebar-collapsed .yt-chips {
     margin-top: 60px;
     margin-left: 240px;
     padding: 68px 28px 40px;
+    min-width: 0; /* body 是纵向 flex，main 默认 min-width:auto 会被内容撑宽 */
     min-height: calc(100vh - 60px);
     min-height: calc(100dvh - 60px);
     transition: margin-left 0.25s ease;
@@ -304,6 +305,8 @@ body.sidebar-collapsed .yt-main {
     }
     .yt-search-row input {
         padding: 0 12px;
+        /* iOS Safari：输入框字号小于 16px 时点一下会自动放大页面，搜完就回不来，页面看起来比手机宽 */
+        font-size: 16px;
     }
     .yt-search-row {
         height: 38px;
