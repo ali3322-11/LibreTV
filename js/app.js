@@ -656,15 +656,27 @@ async function search() {
             }
         });
 
-        // 对搜索结果进行排序：按名称优先，名称相同时按接口源排序
-        allResults.sort((a, b) => {
-            // 首先按照视频名称排序
-            const nameCompare = (a.vod_name || '').localeCompare(b.vod_name || '');
-            if (nameCompare !== 0) return nameCompare;
-            
-            // 如果名称相同，则按照来源排序
-            return (a.source_name || '').localeCompare(b.source_name || '');
-        });
+        // 按关键词相关性过滤：资源站是模糊匹配，常返回大量与片名无关的标题，
+        // 只保留片名（或演员/导演名）真正包含关键词的结果，并按相关度排序
+        const normText = s => (s || '').toLowerCase().replace(/[\s　·•・\-_\/\\]+/g, '');
+        const normQuery = normText(query);
+        const queryTokens = query.split(/\s+/).map(normText).filter(Boolean);
+        const relevanceScore = item => {
+            const haystack = normText(item.vod_name || '') + ' ' + normText(item.vod_actor || '') + ' ' + normText(item.vod_director || '');
+            if (!haystack.trim() || !normQuery) return 0;
+            if (normText(item.vod_name || '') === normQuery) return 4;
+            if (haystack.indexOf(normQuery) !== -1) return 3;
+            if (queryTokens.length > 1 && queryTokens.every(t => haystack.indexOf(t) !== -1)) return 2;
+            if (queryTokens.some(t => t && haystack.indexOf(t) !== -1)) return 1;
+            return 0;
+        };
+        allResults = allResults
+            .map(item => ({ item, score: relevanceScore(item) }))
+            .filter(entry => entry.score > 0)
+            .sort((a, b) => (b.score - a.score)
+                || (a.item.vod_name || '').localeCompare(b.item.vod_name || '')
+                || (a.item.source_name || '').localeCompare(b.item.source_name || ''))
+            .map(entry => entry.item);
 
         // 更新搜索结果计数
         const searchResultsCount = document.getElementById('searchResultsCount');
@@ -674,7 +686,6 @@ async function search() {
 
         // 显示结果区域，调整搜索区域
         document.getElementById('searchArea').classList.remove('flex-1');
-        document.getElementById('searchArea').classList.add('mb-8');
         document.getElementById('resultsArea').classList.remove('hidden');
 
         // 隐藏豆瓣推荐区域（如果存在）
