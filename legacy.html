@@ -63,7 +63,6 @@ video{width:100%;background:#000}
 <h2 id="playTitle" style="display:none"></h2>
 <div id="episodes"></div>
 <video id="player" controls style="display:none"></video>
-<p id="speedWrap" style="display:none">倍速: <select id="speedSel"><option value="0.5">0.5x</option><option value="0.75">0.75x</option><option value="1" selected>1x</option><option value="1.25">1.25x</option><option value="1.5">1.5x</option><option value="2">2x</option></select></p>
 <p class="note" id="directWrap" style="display:none">放不了时点: <a id="directLink" href="#" target="_blank">直接打开播放地址</a></p>
 </div>
 <script src="libs/sha256.min.js"></script>
@@ -157,17 +156,6 @@ var episodesBox = document.getElementById('episodes');
 var player = document.getElementById('player');
 var playTitle = document.getElementById('playTitle');
 var directWrap = document.getElementById('directWrap');
-var speedSel = document.getElementById('speedSel');
-var speedWrap = document.getElementById('speedWrap');
-function applySpeed() {
-  if (!speedSel) { return; }
-  var r = parseFloat(speedSel.value) || 1;
-  try { player.playbackRate = r; } catch (e) {}
-  try { player.defaultPlaybackRate = r; } catch (e) {}
-}
-if (speedSel) {
-  speedSel.onchange = function () { applySpeed(); };
-}
 var directLink = document.getElementById('directLink');
 var ALL_SOURCES_EPS = [];
 var CUR_EP = 0;
@@ -232,11 +220,9 @@ function tryNextSource() {
   if (CUR_TRY > 0) { msgBox.innerHTML = '这个格式放不了,正在试第 ' + (CUR_TRY + 1) + ' 个线路...'; }
   player.style.display = 'block';
   directWrap.style.display = 'block';
-  speedWrap.style.display = 'block';
   directLink.href = url;
   player.src = url;
   player.load();
-  applySpeed();
   try { player.play(); } catch (e) {}
 }
 function playEpisode(idx) {
@@ -331,7 +317,6 @@ document.getElementById('searchForm').onsubmit = function () {
   episodesBox.innerHTML = '';
   player.style.display = 'none';
   directWrap.style.display = 'none';
-  speedWrap.style.display = 'none';
   playTitle.style.display = 'none';
   var url = API_URL + '?ac=videolist&wd=' + encodeURIComponent(q);
   getJSON(proxyUrl(url), function (data) {
