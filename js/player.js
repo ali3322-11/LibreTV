@@ -450,14 +450,15 @@ function initPlayer(videoUrl) {
             if (!wrap || !fr) return;
             var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
             if (!isTouch) {
-                // 桌面：整宽 iframe，800px 高，不缩放
+                // 桌面：整宽 iframe，900px 高，不缩放。
+                // 800px 还是太贴边，字幕和控制条顶着底边会被切掉，900px 留足余量。
                 fr.style.width = '100%';
-                fr.style.height = '800px';
-                fr.style.minHeight = '800px';
+                fr.style.height = '900px';
+                fr.style.minHeight = '900px';
                 fr.style.zoom = '';
                 fr.style.transform = '';
-                wrap.style.height = '800px';
-                container.style.height = '800px';
+                wrap.style.height = '900px';
+                container.style.height = '900px';
             } else {
                 // 手机/平板：800px 宽 iframe 再缩放到容器宽度，播放器完整显示
                 var w = container.clientWidth || wrap.clientWidth;
