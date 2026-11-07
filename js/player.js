@@ -262,7 +262,11 @@ function initializePageContent() {
     });
 
     // 视频暂停时也保存
+    // dyttzy 用 iframe、不建 ArtPlayer 时 art 永远为空，轮询会一直跑下去，限制最多查 50 次（10 秒）就停。
+    var waitForVideoTries = 0;
     const waitForVideo = setInterval(() => {
+        waitForVideoTries++;
+        if (waitForVideoTries > 50) { clearInterval(waitForVideo); return; }
         if (art && art.video) {
             art.video.addEventListener('pause', saveCurrentProgress);
 
@@ -473,11 +477,18 @@ function initPlayer(videoUrl) {
             }
         };
         fitDyttzy();
+        // 缩放/改窗口大小时 resize 会连续触发很多次，每次都量尺寸、改样式会让页面卡顿，
+        // 所以防抖 150ms：等用户停下再算一次。注意存的是防抖后的函数，移除监听时才能对上。
+        var __dyttzyFitTimer = null;
+        var debouncedFitDyttzy = function () {
+            if (__dyttzyFitTimer) clearTimeout(__dyttzyFitTimer);
+            __dyttzyFitTimer = setTimeout(fitDyttzy, 150);
+        };
         window.removeEventListener('resize', window.__dyttzyFit);
         window.removeEventListener('orientationchange', window.__dyttzyFit);
-        window.__dyttzyFit = fitDyttzy;
-        window.addEventListener('resize', fitDyttzy);
-        window.addEventListener('orientationchange', fitDyttzy);
+        window.__dyttzyFit = debouncedFitDyttzy;
+        window.addEventListener('resize', debouncedFitDyttzy);
+        window.addEventListener('orientationchange', debouncedFitDyttzy);
         // 15秒后显示提示（如果视频正常播放，用户手动关闭即可）
         setTimeout(function () {
             var hint = document.getElementById('dyttzy-captcha-hint');
