@@ -437,20 +437,16 @@ function initPlayer(videoUrl) {
             '，然后 <a href="javascript:location.reload()" style="color:#0284c7;text-decoration:underline;">刷新本页</a> 重试' +
             '<span onclick="this.parentElement.style.display=\'none\'" style="float:right;cursor:pointer;">✕</span>' +
             '</div>';
-        // 竖屏时分享页按桌面宽度排版，在窄 iframe 里只露出左半边：
-        // 用 800px 宽的 iframe 再整体缩放到容器宽度，播放器完整显示。
-        // 横屏/桌面宽度够时保持原样。
-        // iframe 高 800px：分享页播放器上方有页头，视频底边（含字幕）会落在 600px 之下，600 高会切掉字幕。
-        // 注意：iOS Safari 对 iframe 的 transform: scale() 缩放不生效（看着和没改一样），
-        // 所以用 WebKit 的 zoom 来缩放（zoom 会真正改变 iframe 内容的布局尺寸），不支持 zoom 的浏览器才回退到 transform。
+        // 按设备分，不按宽度分：浏览器缩放会改变量到的容器宽度，让桌面/手机两套逻辑来回跳，
+        // 这就是电脑端和手机端适配混在一起的原因。触屏设备走手机分支，桌面永远走桌面分支，
+        // 缩放只会整体放大缩小，不会再切分支。
         var fitDyttzy = function () {
             var wrap = document.getElementById('dyttzy-scale-wrap');
             var fr = document.getElementById('dyttzy-iframe');
             if (!wrap || !fr) return;
-            var w = container.clientWidth || wrap.clientWidth;
-            if (w >= 800) {
-                // 桌面端：16:9 的容器高度（1000px 宽时约 562px）放不下分享页的页头+播放器+字幕，
-                // 会切掉底部。直接给 800px 高，让分享页显示完全，不用非得全屏。
+            var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+            if (!isTouch) {
+                // 桌面：整宽 iframe，800px 高，不缩放
                 fr.style.width = '100%';
                 fr.style.height = '800px';
                 fr.style.minHeight = '800px';
@@ -459,6 +455,8 @@ function initPlayer(videoUrl) {
                 wrap.style.height = '800px';
                 container.style.height = '800px';
             } else {
+                // 手机/平板：800px 宽 iframe 再缩放到容器宽度，播放器完整显示
+                var w = container.clientWidth || wrap.clientWidth;
                 var s = w / 800;
                 fr.style.width = '800px';
                 fr.style.height = '800px';
