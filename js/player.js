@@ -449,13 +449,15 @@ function initPlayer(videoUrl) {
             if (!wrap || !fr) return;
             var w = container.clientWidth || wrap.clientWidth;
             if (w >= 800) {
+                // 桌面端：16:9 的容器高度（1000px 宽时约 562px）放不下分享页的页头+播放器+字幕，
+                // 会切掉底部。直接给 800px 高，让分享页显示完全，不用非得全屏。
                 fr.style.width = '100%';
-                fr.style.height = '100%';
-                fr.style.minHeight = '400px';
+                fr.style.height = '800px';
+                fr.style.minHeight = '800px';
                 fr.style.zoom = '';
                 fr.style.transform = '';
-                wrap.style.height = '100%';
-                container.style.height = '';
+                wrap.style.height = '800px';
+                container.style.height = '800px';
             } else {
                 var s = w / 800;
                 fr.style.width = '800px';

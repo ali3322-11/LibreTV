@@ -463,3 +463,10 @@ footer.footer {
     background-image: none !important;
     border-top-color: #e5e7eb !important;
 }
+
+/* 桌面端：播放器放宽（1000px → 1280px），dyttzy 分享页有更大空间显示完全 */
+@media (min-width: 1024px) {
+    .player-container {
+        max-width: 1280px;
+    }
+}
