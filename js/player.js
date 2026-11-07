@@ -832,24 +832,59 @@ class CustomHlsJsLoader extends Hls.DefaultConfig.loader {
     }
 }
 
-// 过滤可疑的广告内容
+// 过滤广告分段：把广告片段本身从清单里删掉，分隔标记留着，进度才不会乱。
+// 旧做法只删 #EXT-X-DISCONTINUITY 这一行，广告文件还在清单里，
+// 全靠时间戳对不上让播放器偶尔跳过，所以广告有时还在、进度条还会错乱。
+// 新做法：按 DISCONTINUITY 把清单切成组，总时长很短（3~60 秒）、片段数不多的一组
+// 就是插播的广告，把那组里的 #EXTINF + 分片地址都删掉，但 DISCONTINUITY 标记保留，
+// 播放器照样知道这里时间戳跳变，时间轴就不会乱。正片的组要长得多，不会误伤。
 function filterAdsFromM3U8(m3u8Content, strictMode = false) {
     if (!m3u8Content) return '';
-
-    // 按行分割M3U8内容
-    const lines = m3u8Content.split('\n');
-    const filteredLines = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-
-        // 只过滤#EXT-X-DISCONTINUITY标识
-        if (!line.includes('#EXT-X-DISCONTINUITY')) {
-            filteredLines.push(line);
+    var lines = m3u8Content.split('\n');
+    // 把清单解析成“条目”：tag 行（#开头）或分片（#EXTINF + 地址）。
+    var entries = []; // {type:'tag', line} 或 {type:'seg', extinf, url, duration}
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (line.indexOf('#EXTINF:') === 0) {
+            var dur = parseFloat(line.slice(8).split(',')[0]) || 0;
+            var url = (i + 1 < lines.length) ? lines[i + 1] : '';
+            entries.push({ type: 'seg', extinf: line, url: url, duration: dur });
+            i++; // 跳过已配对的地址行
+        } else {
+            entries.push({ type: 'tag', line: line });
         }
     }
-
-    return filteredLines.join('\n');
+    // 按 #EXT-X-DISCONTINUITY 把分片切成组。组 = 两次分隔之间连续的分片。
+    var groups = []; // {segs:[entry...], duration}
+    var cur = { segs: [], duration: 0 };
+    entries.forEach(function (e) {
+        if (e.type === 'tag' && e.line.indexOf('#EXT-X-DISCONTINUITY') === 0) {
+            groups.push(cur);
+            cur = { segs: [], duration: 0 };
+        } else if (e.type === 'seg') {
+            cur.segs.push(e);
+            cur.duration += e.duration;
+        }
+    });
+    groups.push(cur);
+    // 只有清单总时长够长（正片）时才动手，避免误删短视频。
+    var totalDur = groups.reduce(function (s, g) { return s + g.duration; }, 0);
+    var drop = new Set();
+    if (totalDur > 90 && groups.length >= 2) {
+        groups.forEach(function (g) {
+            // 广告组特征：总时长 3~60 秒、片段数不多（插播广告通常 1~8 个分片）。
+            if (g.segs.length > 0 && g.segs.length <= 8 && g.duration >= 3 && g.duration <= 60) {
+                g.segs.forEach(function (s) { drop.add(s); });
+            }
+        });
+    }
+    // 输出：所有 tag 行（含 DISCONTINUITY）照原样保留，只删掉被判定为广告的分片。
+    var out = [];
+    entries.forEach(function (e) {
+        if (e.type === 'tag') { out.push(e.line); }
+        else if (!drop.has(e)) { out.push(e.extinf); out.push(e.url); }
+    });
+    return out.join('\n');
 }
 
 
