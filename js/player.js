@@ -433,6 +433,10 @@ function initPlayer(videoUrl) {
             'style="width:100%;height:100%;min-height:400px;border:0;" ' +
             'allowfullscreen allow="autoplay; fullscreen"></iframe>' +
             '</div>' +
+            // 站内全屏按钮：分享页自己的全屏按钮在 iframe 里不好使，直接把 iframe 整个全屏
+            '<div style="margin-top:8px;text-align:right;">' +
+            '<button id="dyttzy-fullscreen-btn" style="padding:8px 16px;background:#e50914;color:#fff;border:0;border-radius:8px;cursor:pointer;font-size:14px;">⛶ 全屏播放</button>' +
+            '</div>' +
             // 验证码过期提示条：15秒后显示，用户可手动关闭
             '<div id="dyttzy-captcha-hint" style="display:none;margin-top:8px;padding:10px 14px;' +
             'background:#fff7ed;border:1px solid #fdba74;border-radius:8px;font-size:13px;color:#9a3412;">' +
@@ -444,12 +448,12 @@ function initPlayer(videoUrl) {
         // 按设备分，不按宽度分：浏览器缩放会改变量到的容器宽度，让桌面/手机两套逻辑来回跳，
         // 这就是电脑端和手机端适配混在一起的原因。触屏设备走手机分支，桌面永远走桌面分支，
         // 缩放只会整体放大缩小，不会再切分支。
+        var isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
         var fitDyttzy = function () {
             var wrap = document.getElementById('dyttzy-scale-wrap');
             var fr = document.getElementById('dyttzy-iframe');
             if (!wrap || !fr) return;
-            var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-            if (!isTouch) {
+            if (!isTouchDevice) {
                 // 桌面：整宽 iframe，900px 高，不缩放。
                 // 800px 还是太贴边，字幕和控制条顶着底边会被切掉，900px 留足余量。
                 fr.style.width = '100%';
@@ -478,18 +482,35 @@ function initPlayer(videoUrl) {
             }
         };
         fitDyttzy();
+        // 站内全屏按钮：把 iframe 本身全屏，分享页跟着铺满整个屏幕，不依赖分享页自己的全屏按钮
+        var dyttzyFsBtn = document.getElementById('dyttzy-fullscreen-btn');
+        if (dyttzyFsBtn) {
+            dyttzyFsBtn.onclick = function () {
+                var fr = document.getElementById('dyttzy-iframe');
+                if (!fr) return;
+                if (fr.requestFullscreen) fr.requestFullscreen();
+                else if (fr.webkitRequestFullscreen) fr.webkitRequestFullscreen();
+            };
+        }
+        // 桌面端布局是固定的（整宽、900px 高），不依赖宽度，缩放时不需要重算；
+        // 只在触屏设备上监听 resize/orientationchange（转屏要重算缩放比例），
+        // 否则桌面端每次缩放都会触发重排，画面跟着跳。
         // 缩放/改窗口大小时 resize 会连续触发很多次，每次都量尺寸、改样式会让页面卡顿，
         // 所以防抖 150ms：等用户停下再算一次。注意存的是防抖后的函数，移除监听时才能对上。
-        var __dyttzyFitTimer = null;
-        var debouncedFitDyttzy = function () {
-            if (__dyttzyFitTimer) clearTimeout(__dyttzyFitTimer);
-            __dyttzyFitTimer = setTimeout(fitDyttzy, 150);
-        };
         window.removeEventListener('resize', window.__dyttzyFit);
         window.removeEventListener('orientationchange', window.__dyttzyFit);
-        window.__dyttzyFit = debouncedFitDyttzy;
-        window.addEventListener('resize', debouncedFitDyttzy);
-        window.addEventListener('orientationchange', debouncedFitDyttzy);
+        if (isTouchDevice) {
+            var __dyttzyFitTimer = null;
+            var debouncedFitDyttzy = function () {
+                if (__dyttzyFitTimer) clearTimeout(__dyttzyFitTimer);
+                __dyttzyFitTimer = setTimeout(fitDyttzy, 150);
+            };
+            window.__dyttzyFit = debouncedFitDyttzy;
+            window.addEventListener('resize', debouncedFitDyttzy);
+            window.addEventListener('orientationchange', debouncedFitDyttzy);
+        } else {
+            window.__dyttzyFit = null;
+        }
         // 15秒后显示提示（如果视频正常播放，用户手动关闭即可）
         setTimeout(function () {
             var hint = document.getElementById('dyttzy-captcha-hint');
